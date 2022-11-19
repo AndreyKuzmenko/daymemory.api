@@ -1,0 +1,34 @@
+﻿using DayMemory.Core.Models.Common;
+
+namespace DayMemory.Core.Models.Personal
+{
+    public enum ImageSource
+    {
+        Note = 1,
+
+        Profile = 2
+    }
+
+    public class Image : BaseEntity
+    {
+        public string? FileName { get; set; }
+
+        public string? FileContentType { get; set; }
+
+        public int FileSize { get; set; }
+
+        public int Width { get; set; }
+
+        public int Height { get; set; }
+
+        public virtual User? User { get; set; }
+
+        public string? UserId { get; set; }
+
+        public ImageSource? Source { get; set; }
+
+        public Image()
+        {
+        }
+    }
+}

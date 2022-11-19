@@ -1,0 +1,14 @@
+﻿using DayMemory.Core.Queries.Categories.Projections;
+using DayMemory.Core.Queries.Projections;
+using DayMemory.Core.Queries.Sync.Projections;
+using MediatR;
+
+namespace DayMemory.Core.Queries
+{
+    public class GetSyncTagsQuery : IRequest<IList<SyncTagProjection>>
+    {
+        public string? UserId { get; set; }
+
+        public long? LastSyncDateTime { get; set; }
+    }
+}
