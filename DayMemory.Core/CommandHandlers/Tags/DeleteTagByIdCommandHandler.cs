@@ -19,9 +19,12 @@ namespace DayMemory.Core.CommandHandlers
         public async Task<Unit> Handle(DeleteTagCommand request, CancellationToken cancellationToken)
         {
             var item = await _tagRepository.LoadByIdAsync(request.TagId!, cancellationToken);
-            item.IsDeleted = true;
-            item.ModifiedDate = _clock.UtcNow;
-            await _tagRepository.UpdateAsync(item, cancellationToken);
+            if (item != null)
+            {
+                item.IsDeleted = true;
+                item.ModifiedDate = _clock.UtcNow;
+                await _tagRepository.UpdateAsync(item, cancellationToken);
+            }
             return Unit.Value;
         }
     }
