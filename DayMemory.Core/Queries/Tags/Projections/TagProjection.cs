@@ -1,4 +1,4 @@
-﻿namespace DayMemory.Core.Queries.Categories.Projections
+﻿namespace DayMemory.Core.Queries.Tags.Projections
 {
     public class TagProjection
     {

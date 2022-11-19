@@ -1,4 +1,4 @@
-﻿using DayMemory.Core.Queries.Categories.Projections;
+﻿using DayMemory.Core.Queries.Tags.Projections;
 using DayMemory.Core.Queries.Projections;
 using MediatR;
 

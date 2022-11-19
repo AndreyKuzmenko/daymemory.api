@@ -1,11 +1,11 @@
-﻿using DayMemory.Core.Queries.Categories.Projections;
+﻿using DayMemory.Core.Queries.Tags.Projections;
 using DayMemory.Core.Models.Personal;
 using DayMemory.Core.Queries;
 using DayMemory.DAL;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace DayMemory.DAL.QueryHandlers.Categories
+namespace DayMemory.DAL.QueryHandlers.Tags
 {
     public class GetAllTagsQueryHandler : IRequestHandler<GetAllTagsQuery, IList<TagProjection>>
     {

@@ -37,6 +37,8 @@ namespace DayMemory.API.Controllers
         [Route("api/images/{source}/{imageId}")]
         public async Task<ActionResult<ImageDto>> Upload([FromRoute] string source, [FromRoute] string imageId, [FromForm] IFormFile file)
         {
+
+            //TODO: Change to COMMAND
             if (!Enum.TryParse(source, true, out ImageSource imageSource))
             {
                 return BadRequest(ModelState);
