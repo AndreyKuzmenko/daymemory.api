@@ -108,7 +108,7 @@ namespace DayMemory.Web.Areas.Mobile
             }
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var backOfficeTemplateUrl = _urlSettings.RetorePasswordUrlTemplate;
+            var backOfficeTemplateUrl = _urlSettings.RestorePasswordUrlTemplate;
             var restoreLinkUrl = string.Format(backOfficeTemplateUrl!, HttpUtility.UrlEncode(token), model.Email);
 
             //SEND EMAIL

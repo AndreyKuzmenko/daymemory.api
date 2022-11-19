@@ -12,6 +12,6 @@ namespace DayMemory.Core.Settings
         public string? BlobStorageRootUrl { get; set; }
 
         [Required, Url]
-        public string? RetorePasswordUrlTemplate { get; set; }
+        public string? RestorePasswordUrlTemplate { get; set; }
     }
 }
