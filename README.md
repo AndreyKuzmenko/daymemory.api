@@ -1,6 +1,6 @@
 # Day Memory Api Project
 
-Start by configuring the appsettings. For that you need to have an azure blob storage.
+Start by configuring the appsettings.
 1. Azure storage
 - StorageConnectionString
 - BlobStorageRootUrl - Azure fileUrl, e.g. https://[name].blob.core.windows.net
