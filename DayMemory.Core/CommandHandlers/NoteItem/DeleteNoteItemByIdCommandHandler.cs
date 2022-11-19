@@ -19,9 +19,12 @@ namespace DayMemory.Core.CommandHandlers
         public async Task<Unit> Handle(DeleteNoteItemCommand request, CancellationToken cancellationToken)
         {
             var item = await _noteRepository.LoadByIdAsync(request.NoteItemId!, cancellationToken);
-            item.IsDeleted = true;
-            item.ModifiedDate = _clock.UtcNow;
-            await _noteRepository.UpdateAsync(item, cancellationToken);
+            if (item != null)
+            {
+                item.IsDeleted = true;
+                item.ModifiedDate = _clock.UtcNow;
+                await _noteRepository.UpdateAsync(item, cancellationToken);
+            }
             return Unit.Value;
         }
     }
