@@ -21,13 +21,15 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Text.Json;
 using DayMemory.Core;
+using Microsoft.Extensions.Logging;
+using DayMemory.API.Components;
 
 string CorsPolicyName = "DayMemoryCorsPolicy";
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddApplicationInsightsTelemetry();
 builder.Services.AddControllers(options =>
 {
     //options.ModelValidatorProviders.Clear();
@@ -188,6 +190,7 @@ using (var scope = app.Services.CreateScope())
     context.Database.Migrate();
 }
 
+app.UseMiddleware<ErrorHandlerMiddleware>();
 app.UseHttpsRedirection();
 app.UseCors(CorsPolicyName);
 var cookiePolicyOptions = new CookiePolicyOptions
@@ -243,6 +246,9 @@ app.MapGet("/api/keep-alive", async context =>
 {
     await context.Response.WriteAsync("OK");
 });
+
+
+app.Logger.LogInformation("App Started");
 
 app.Run();
 
