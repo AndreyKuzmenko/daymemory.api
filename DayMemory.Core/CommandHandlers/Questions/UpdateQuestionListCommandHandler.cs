@@ -1,5 +1,6 @@
 ﻿using DayMemory.Core.Commands;
 using DayMemory.Core.Interfaces.Repositories;
+using DayMemory.Core.Models.Exceptions;
 using DayMemory.Core.Models.Personal;
 using DayMemory.Core.Services;
 using MediatR;
@@ -24,7 +25,7 @@ namespace DayMemory.Core.CommandHandlers
             var item = await _questionListRepository.LoadByIdAsync(request.QuestionListId!, cancellationToken);
             if (item == null)
             {
-                throw new InvalidOperationException("Item does not exist");
+                throw new ResourceNotFoundException();
             }
 
             item.Text = request.Text ?? "";

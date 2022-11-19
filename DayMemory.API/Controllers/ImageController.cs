@@ -26,8 +26,8 @@ namespace DayMemory.API.Controllers
         [HttpHead]
         public async Task<ActionResult<ImageDto>> Upload([FromRoute] string imageId)
         {
-            var image = await _imageRepository.LoadByIdAsync(imageId);
-            if (image == null)
+            var image = await _imageRepository.ExistsAsync(imageId);
+            if (!image)
                 return NotFound();
 
             return Ok();

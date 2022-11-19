@@ -1,5 +1,6 @@
 ﻿using DayMemory.Core.Commands;
 using DayMemory.Core.Interfaces.Repositories;
+using DayMemory.Core.Models.Exceptions;
 using DayMemory.Core.Models.Personal;
 using DayMemory.Core.Services;
 using MediatR;
@@ -24,6 +25,10 @@ namespace DayMemory.Core.CommandHandlers
             foreach (var questionList in request.QuestionLists)
             {
                 var item = await _questionListRepository.LoadByIdAsync(questionList.QuestionListId!, cancellationToken);
+                if (item == null)
+                {
+                    throw new ResourceNotFoundException();
+                }
                 item.ModifiedDate = _clock.UtcNow;
                 item.OrderRank = questionList.OrderRank;
                 await _questionListRepository.UpdateAsync(item, cancellationToken);

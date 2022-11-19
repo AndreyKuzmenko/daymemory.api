@@ -18,16 +18,16 @@ namespace DayMemory.DAL.Repositories
             DbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
-        public Task<TEntity> LoadByIdAsync(string id)
+        public Task<TEntity?> LoadByIdAsync(string id)
         {
             return LoadByIdAsync(id, CancellationToken.None);
         }
 
-        public async Task<TEntity> LoadByIdAsync(string id, CancellationToken ct)
+        public async Task<TEntity?> LoadByIdAsync(string id, CancellationToken ct)
         {
             var entity = await GetQuery().FirstOrDefaultAsync(e => e.Id == id, ct);
 
-            return entity ?? throw new ResourceNotFoundException();
+            return entity;
         }
 
         public Task<bool> ExistsAsync(string id)

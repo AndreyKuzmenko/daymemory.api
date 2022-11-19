@@ -6,8 +6,8 @@ namespace DayMemory.Core.Interfaces.Repositories
 {
     public interface IRepository<TEntity> where TEntity : BaseEntity
     {
-        Task<TEntity> LoadByIdAsync(string id);
-        Task<TEntity> LoadByIdAsync(string id, CancellationToken ct);
+        Task<TEntity?> LoadByIdAsync(string id);
+        Task<TEntity?> LoadByIdAsync(string id, CancellationToken ct);
 
         Task<bool> ExistsAsync(string id);
         Task<bool> ExistsAsync(string id, CancellationToken ct);
