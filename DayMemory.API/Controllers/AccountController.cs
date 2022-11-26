@@ -27,7 +27,7 @@ namespace DayMemory.Web.Areas.Mobile
         private readonly IEmailTemplateGenerator _emailTemplateGenerator;
 
         public AccountController(UserManager<IdentityUser> userManager, ILogger<AccountController> logger,
-            IJwTokenHelper jwTokenHelper, IEmailSender emailSender, IConfiguration configuration, SignInManager<IdentityUser> signInManager, UrlSettings urlSettings, 
+            IJwTokenHelper jwTokenHelper, IEmailSender emailSender, IConfiguration configuration, SignInManager<IdentityUser> signInManager, UrlSettings urlSettings,
             IMediator mediator, IEmailTemplateGenerator emailTemplateGenerator)
         {
 
@@ -85,7 +85,14 @@ namespace DayMemory.Web.Areas.Mobile
                 return BadRequest("No user with the specified e-mail found!");
             }
 
-            var res = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+            var tokenVerificationRes = await _userManager.VerifyUserTokenAsync(user, TokenOptions.DefaultPhoneProvider, "ResetPasswordPurpose", model.Token);
+            if (!tokenVerificationRes)
+            {
+                return BadRequest("Invalid Token");
+            }
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var res = await _userManager.ResetPasswordAsync(user, token, model.Password);
             if (!res.Succeeded)
             {
                 return BadRequest("Can't restore password. Please contact Administrator.");
@@ -107,14 +114,12 @@ namespace DayMemory.Web.Areas.Mobile
                 return BadRequest();
             }
 
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var backOfficeTemplateUrl = _urlSettings.RestorePasswordUrlTemplate;
-            var restoreLinkUrl = string.Format(backOfficeTemplateUrl!, HttpUtility.UrlEncode(token), model.Email);
+            var token = await _userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultPhoneProvider, "ResetPasswordPurpose");
 
             //SEND EMAIL
             var content = _emailTemplateGenerator.GenerateMailTemplate("RestorePassword", "en",
                 new Dictionary<string, string>() {
-                                { "RestoreLinkUrl", restoreLinkUrl }
+                                { "Token", token }
                 });
 
             _emailSender.SendMail(model.Email!, "Password Recovery", content);
@@ -219,7 +224,6 @@ namespace DayMemory.Web.Areas.Mobile
             var user = await _userManager.FindByLoginAsync(model.ProviderType, model.Id) as User;
             if (user != null)
             {
-                var userRoles = await _userManager.GetRolesAsync(user);
                 var t = await _jwTokenHelper.GenerateJwtToken(user);
                 return Ok(new
                 {
