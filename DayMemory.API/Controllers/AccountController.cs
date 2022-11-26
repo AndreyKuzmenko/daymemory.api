@@ -79,7 +79,7 @@ namespace DayMemory.Web.Areas.Mobile
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var user = await _userManager.FindByEmailAsync(model.Email);
+            var user = await _userManager.FindByEmailAsync(model.Email) as User;
             if (user == null)
             {
                 return BadRequest("No user with the specified e-mail found!");
@@ -98,7 +98,8 @@ namespace DayMemory.Web.Areas.Mobile
                 return BadRequest("Can't restore password. Please contact Administrator.");
             }
 
-            return Ok();
+            var jwtToken = await _jwTokenHelper.GenerateJwtToken(user);
+            return Ok(new AccountModel(user, jwtToken));
         }
 
         [HttpPost]
@@ -146,19 +147,8 @@ namespace DayMemory.Web.Areas.Mobile
                 return BadRequest();
             }
 
-            var roles = await _userManager.GetRolesAsync(user);
-
             var token = await _jwTokenHelper.GenerateJwtToken(user);
-
-            return Ok(new
-            {
-                Token = token,
-                Id = user.Id,
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                IsAdministrator = roles.Any(x => x == "Administrator")
-            });
+            return Ok(new AccountModel(user, token));
         }
 
         [HttpPost]
@@ -201,17 +191,9 @@ namespace DayMemory.Web.Areas.Mobile
             user = await _userManager.FindByEmailAsync(model.Email) as User;
 
             var token = await _jwTokenHelper.GenerateJwtToken(user!);
+            //await _mediator.Publish(new UserCreatedNotification() { UserId = user!.Id });
 
-            await _mediator.Publish(new UserCreatedNotification() { UserId = user!.Id });
-
-            return Ok(new
-            {
-                Token = token,
-                Id = user.Id,
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName
-            });
+            return Ok(new AccountModel(user, token));
         }
 
         [HttpPost]
@@ -225,14 +207,7 @@ namespace DayMemory.Web.Areas.Mobile
             if (user != null)
             {
                 var t = await _jwTokenHelper.GenerateJwtToken(user);
-                return Ok(new
-                {
-                    Token = t,
-                    Id = user.Id,
-                    Email = user.Email,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName
-                });
+                return Ok(new AccountModel(user, t));
             }
 
             if (string.IsNullOrEmpty(model.Email))
@@ -275,16 +250,9 @@ namespace DayMemory.Web.Areas.Mobile
             await _userManager.AddLoginAsync(user, new UserLoginInfo(model.ProviderType, model.Id, model.FirstName + model.LastName));
             var token = await _jwTokenHelper.GenerateJwtToken(user);
 
-            await _mediator.Publish(new UserCreatedNotification() { UserId = user.Id });
+            //await _mediator.Publish(new UserCreatedNotification() { UserId = user.Id });
 
-            return Ok(new
-            {
-                Token = token,
-                Id = user.Id,
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName
-            });
+            return Ok(new AccountModel(user, token));
         }
     }
 }

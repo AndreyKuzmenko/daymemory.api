@@ -18,6 +18,15 @@ namespace DayMemory.Web.Api.Models
             this.Id = user.Id;
         }
 
+        public AccountModel(User user, string token)
+        {
+            this.Email = user.Email;
+            this.FirstName = user.FirstName;
+            this.LastName = user.LastName;
+            this.Id = user.Id;
+            this.Token = token;
+        }
+
         public AccountModel(string token, string email, string firstName, string lastName)
         {
             Token = token;
