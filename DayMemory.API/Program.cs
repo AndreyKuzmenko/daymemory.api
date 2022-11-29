@@ -64,6 +64,7 @@ builder.Services.AddSingleton(resolver =>
 // SERVICES
 builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<ITagRepository, TagRepository>();
+builder.Services.AddTransient<INotebookRepository, NotebookRepository>();
 builder.Services.AddTransient<IImageRepository, ImageRepository>();
 builder.Services.AddTransient<ILocationRepository, LocationRepository>();
 builder.Services.AddTransient<INoteItemRepository, NoteItemRepository>();

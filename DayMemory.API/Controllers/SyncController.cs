@@ -30,6 +30,14 @@ namespace DayMemory.API.Controllers
             return Ok(items);
         }
 
+        [HttpGet("notebooks")]
+        public async Task<IActionResult> GetAllNotebooks([FromQuery] GetSyncNotebooksQuery query, CancellationToken ct)
+        {
+            query.UserId = User.Identity!.Name;
+            var items = await _mediator.Send(query, ct);
+            return Ok(items);
+        }
+
         [HttpGet("tags")]
         public async Task<IActionResult> GetAllTags([FromQuery] GetSyncTagsQuery query, CancellationToken ct)
         {
