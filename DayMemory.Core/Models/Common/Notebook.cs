@@ -1,0 +1,18 @@
+﻿using DayMemory.Core.Models.Common;
+using DayMemory.Core.Services;
+
+namespace DayMemory.Core.Models.Personal
+{
+    public class Notebook : BaseEntity
+    {
+        public string? Title { get; set; }
+
+        public virtual List<NoteItem> Notes { get; set; } = new List<NoteItem>();
+
+        public string? UserId { get; set; }
+
+        public virtual User? User { get; set; }
+
+        public bool IsDeleted { get; set; }
+    }
+}

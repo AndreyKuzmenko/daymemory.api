@@ -72,7 +72,6 @@ namespace DayMemory.DAL.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -91,6 +90,37 @@ namespace DayMemory.DAL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Location", (string)null);
+                });
+
+            modelBuilder.Entity("DayMemory.Core.Models.Personal.Notebook", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTimeOffset>("CreatedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset>("ModifiedDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Notebook", (string)null);
                 });
 
             modelBuilder.Entity("DayMemory.Core.Models.Personal.NoteImage", b =>
@@ -146,10 +176,14 @@ namespace DayMemory.DAL.Migrations
                     b.Property<DateTimeOffset>("ModifiedDate")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("NotebookId")
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<string>("Text")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -157,6 +191,8 @@ namespace DayMemory.DAL.Migrations
                     b.HasIndex("LocationId")
                         .IsUnique()
                         .HasFilter("[LocationId] IS NOT NULL");
+
+                    b.HasIndex("NotebookId");
 
                     b.HasIndex("UserId");
 
@@ -176,11 +212,9 @@ namespace DayMemory.DAL.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("QuestionListId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Text")
-                        .IsRequired()
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
@@ -481,6 +515,17 @@ namespace DayMemory.DAL.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("DayMemory.Core.Models.Personal.Notebook", b =>
+                {
+                    b.HasOne("DayMemory.Core.Models.Common.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("DayMemory.Core.Models.Personal.NoteImage", b =>
                 {
                     b.HasOne("DayMemory.Core.Models.Personal.Image", "Image")
@@ -507,12 +552,20 @@ namespace DayMemory.DAL.Migrations
                         .HasForeignKey("DayMemory.Core.Models.Personal.NoteItem", "LocationId")
                         .OnDelete(DeleteBehavior.Cascade);
 
+                    b.HasOne("DayMemory.Core.Models.Personal.Notebook", "Notebook")
+                        .WithMany("Notes")
+                        .HasForeignKey("NotebookId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("DayMemory.Core.Models.Common.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("Location");
+
+                    b.Navigation("Notebook");
 
                     b.Navigation("User");
                 });
@@ -522,8 +575,7 @@ namespace DayMemory.DAL.Migrations
                     b.HasOne("DayMemory.Core.Models.Personal.QuestionList", "QuestionList")
                         .WithMany("Questions")
                         .HasForeignKey("QuestionListId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("QuestionList");
                 });
@@ -601,8 +653,12 @@ namespace DayMemory.DAL.Migrations
 
             modelBuilder.Entity("DayMemory.Core.Models.Personal.Location", b =>
                 {
-                    b.Navigation("NoteItem")
-                        .IsRequired();
+                    b.Navigation("NoteItem");
+                });
+
+            modelBuilder.Entity("DayMemory.Core.Models.Personal.Notebook", b =>
+                {
+                    b.Navigation("Notes");
                 });
 
             modelBuilder.Entity("DayMemory.Core.Models.Personal.NoteItem", b =>

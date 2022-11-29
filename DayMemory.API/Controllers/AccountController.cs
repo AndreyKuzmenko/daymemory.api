@@ -193,7 +193,7 @@ namespace DayMemory.Web.Areas.Mobile
             var token = await _jwTokenHelper.GenerateJwtToken(user!);
             //await _mediator.Publish(new UserCreatedNotification() { UserId = user!.Id });
 
-            return Ok(new AccountModel(user, token));
+            return Ok(new AccountModel(user!, token));
         }
 
         [HttpPost]

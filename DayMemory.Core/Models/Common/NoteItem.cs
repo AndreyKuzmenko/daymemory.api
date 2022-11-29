@@ -9,6 +9,10 @@ namespace DayMemory.Core.Models.Personal
 
         public DateTimeOffset Date { get; set; }
 
+        public string? NotebookId { get; set; }
+
+        public virtual Notebook? Notebook { get; set; }
+
         public string? LocationId { get; set; }
 
         public virtual Location? Location { get; set; }
