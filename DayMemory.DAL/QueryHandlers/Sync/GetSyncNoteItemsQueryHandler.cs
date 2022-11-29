@@ -47,6 +47,7 @@ namespace DayMemory.DAL.QueryHandlers.Notes
                      {
                          Id = entity.Id,
                          Text = entity.Text,
+                         NotebookId = entity.NotebookId,
                          ModifiedDate = entity.ModifiedDate.ToUnixTimeMilliseconds(),
                          Date = entity.Date.ToUnixTimeMilliseconds(),
                          Images = entity.Images.OrderBy(x => x.OrderRank).ThenBy(x => x.Image!.CreatedDate).Select(i => new ImageProjection

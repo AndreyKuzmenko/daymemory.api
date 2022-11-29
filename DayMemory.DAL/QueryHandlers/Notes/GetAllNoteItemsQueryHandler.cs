@@ -46,6 +46,7 @@ namespace DayMemory.DAL.QueryHandlers.Notes
                  .Select(entity => new NoteItemProjection
                  {
                      Id = entity.Id,
+                     NotebookId = entity.NotebookId,
                      Text = entity.Text,
                      ModifiedDate = entity.ModifiedDate.ToUnixTimeMilliseconds(),
                      Date = entity.Date.ToUnixTimeMilliseconds(),

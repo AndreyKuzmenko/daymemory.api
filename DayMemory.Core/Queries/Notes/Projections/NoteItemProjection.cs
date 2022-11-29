@@ -6,6 +6,8 @@ namespace DayMemory.Core.Queries.Projections
     {
         public string? Id { get; set; }
 
+        public string? NotebookId { get; set; }
+
         public string? Text { get; set; }
             
         public long? Date { get; set; }
