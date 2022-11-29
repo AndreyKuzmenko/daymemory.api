@@ -1,6 +1,3 @@
-using Google.Cloud.Firestore;
-using DayMemory.Core.Commands;
-using DayMemory.Core.Models.Common;
 using DayMemory.Core.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

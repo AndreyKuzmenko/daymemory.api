@@ -14,7 +14,7 @@ namespace DayMemory.DAL.Mapping
             builder.Property(x => x.ModifiedDate).IsRequired();
             builder.Property(x => x.Date).IsRequired();
 
-            builder.HasOne(x => x.Notebook).WithMany(x => x.Notes).OnDelete(DeleteBehavior.NoAction);
+            builder.HasOne(x => x.Notebook).WithMany(x => x.Notes).IsRequired().OnDelete(DeleteBehavior.NoAction);
             builder.HasOne(x => x.Location).WithOne(x => x.NoteItem).OnDelete(DeleteBehavior.Cascade);
             builder.HasOne(x => x.User).WithMany().IsRequired().OnDelete(DeleteBehavior.NoAction);
 

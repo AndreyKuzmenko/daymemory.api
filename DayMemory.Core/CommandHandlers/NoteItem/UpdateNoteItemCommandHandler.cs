@@ -43,6 +43,7 @@ namespace DayMemory.Core.CommandHandlers
             note.Text = request.Text;
             note.SetImages(request.Images ?? Array.Empty<string>());
             note.LocationId = locationId;
+            note.NotebookId = request.NotebookId;
             note.Date = DateTimeOffset.FromUnixTimeMilliseconds(request.Date);
             note.ModifiedDate = _clock.UtcNow;
             await _noteItemRepository.UpdateAsync(note, cancellationToken);

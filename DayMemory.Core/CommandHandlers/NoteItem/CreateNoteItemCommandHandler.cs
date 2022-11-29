@@ -41,6 +41,7 @@ namespace DayMemory.Core.CommandHandlers
             var item = new NoteItem()
             {
                 Id = request.NoteId == null ? StringUtils.GenerateUniqueString() : request.NoteId,
+                NotebookId = request.NotebookId,
                 UserId = request.UserId!,
                 LocationId = locationId,
                 Text = request.Text ?? "",

@@ -8,6 +8,8 @@ namespace DayMemory.Core.Commands
     {
         public string? NoteId { get; set; }
 
+        public string? NotebookId { get; set; }
+
         public string? Text { get; set; }
 
         public string[]? Images { get; set; }
