@@ -16,18 +16,21 @@ namespace DayMemory.API.Controllers
 
         private readonly IImageService _imageService;
 
-        public ImageController(IImageRepository imageRepository, IImageService imageService)
+        private readonly IUrlResolver _urlResolver;
+
+        public ImageController(IImageRepository imageRepository, IImageService imageService, IUrlResolver urlResolver)
         {
             _imageRepository = imageRepository;
             _imageService = imageService;
+            this._urlResolver = urlResolver;
         }
 
         [Route("api/images/{source}/{imageId}")]
         [HttpHead]
         public async Task<ActionResult<ImageDto>> CheckIfImageExists([FromRoute] string imageId)
         {
-            var image = await _imageRepository.ExistsAsync(imageId);
-            if (!image)
+            var imageExists = await _imageRepository.ExistsAsync(imageId);
+            if (!imageExists)
                 return NotFound();
 
             return Ok();
@@ -37,7 +40,7 @@ namespace DayMemory.API.Controllers
         [Route("api/images/{source}/{imageId}")]
         public async Task<ActionResult<ImageDto>> Upload([FromRoute] string source, [FromRoute] string imageId, [FromForm] IFormFile file)
         {
-
+            var userId = User.Identity!.Name!;
             //TODO: Change to COMMAND
             if (!Enum.TryParse(source, true, out ImageSource imageSource))
             {
@@ -49,20 +52,34 @@ namespace DayMemory.API.Controllers
                 return BadRequest();
             }
 
-            var userId = User.Identity!.Name!;
+
+            var image = await _imageRepository.LoadByIdAsync(imageId);
+            if (image != null)
+            {
+                return new ImageDto
+                {
+                    Id = imageId,
+                    Name = file.FileName,
+                    Url = _urlResolver.GetImageUrlTemplate(imageSource, userId),
+                    Height = image.Height,
+                    Width = image.Width
+                };
+            }
+
+
             var imageUrl = await _imageService.UploadFileToCloudStorage(file.OpenReadStream(), file.ContentType, $"{userId}/{imageId}", source);
 
-            using (var image = SKImage.FromEncodedData(file.OpenReadStream()))
+            using (var skImage = SKImage.FromEncodedData(file.OpenReadStream()))
             {
-                await SaveImage(imageSource, file.FileName, file.ContentType, (int)file.Length, image.Width, image.Height, imageId, userId);
+                await SaveImage(imageSource, file.FileName, file.ContentType, (int)file.Length, skImage.Width, skImage.Height, imageId, userId);
 
                 return new ImageDto
                 {
                     Id = imageId,
                     Name = file.FileName,
                     Url = imageUrl,
-                    Height = image.Height,
-                    Width = image.Width
+                    Height = skImage.Height,
+                    Width = skImage.Width
                 };
             }
         }
