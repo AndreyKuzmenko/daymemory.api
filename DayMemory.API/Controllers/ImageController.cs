@@ -24,7 +24,7 @@ namespace DayMemory.API.Controllers
 
         [Route("api/images/{source}/{imageId}")]
         [HttpHead]
-        public async Task<ActionResult<ImageDto>> Upload([FromRoute] string imageId)
+        public async Task<ActionResult<ImageDto>> CheckIfImageExists([FromRoute] string imageId)
         {
             var image = await _imageRepository.ExistsAsync(imageId);
             if (!image)
