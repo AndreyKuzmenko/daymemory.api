@@ -5,7 +5,7 @@ using MediatR;
 
 namespace DayMemory.Core.Queries
 {
-    public class GetSyncNotebooksQuery : IRequest<IList<SyncNotebookProjection>>
+    public class GetSyncNotebooksQuery : IRequest<SyncListProjection<SyncNotebookProjection>>
     {
         public string? UserId { get; set; }
 

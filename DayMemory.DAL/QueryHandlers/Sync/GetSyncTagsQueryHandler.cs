@@ -11,7 +11,7 @@ using DayMemory.Core.Queries.Sync.Projections;
 
 namespace DayMemory.DAL.QueryHandlers.Notes
 {
-    public class GetSyncTagsQueryHandler : IRequestHandler<GetSyncTagsQuery, IList<SyncTagProjection>>
+    public class GetSyncTagsQueryHandler : IRequestHandler<GetSyncTagsQuery, SyncListProjection<SyncTagProjection>>
     {
         private readonly IReadDbContext _readDbContext;
 
@@ -20,14 +20,14 @@ namespace DayMemory.DAL.QueryHandlers.Notes
             _readDbContext = readDbContext;
         }
 
-        public async Task<IList<SyncTagProjection>> Handle(GetSyncTagsQuery request, CancellationToken cancellationToken)
+        public async Task<SyncListProjection<SyncTagProjection>> Handle(GetSyncTagsQuery request, CancellationToken cancellationToken)
         {
             var query = _readDbContext.GetQuery<Tag>()
                         .AsNoTracking();
 
             DateTimeOffset? lastSyncDateTime = request.LastSyncDateTime.HasValue ? DateTimeOffset.FromUnixTimeMilliseconds(request.LastSyncDateTime.Value) : null;
 
-            var items = await query
+            var items = query
                 .Where(x => x.UserId == request.UserId)
                 .OrderBy(d => d.ModifiedDate)
                 .Where(x => lastSyncDateTime == null || x.ModifiedDate > lastSyncDateTime)
@@ -43,10 +43,15 @@ namespace DayMemory.DAL.QueryHandlers.Notes
                          OrderRank = entity.OrderRank,
                          ModifiedDate = entity.ModifiedDate.ToUnixTimeMilliseconds(),
                      }
-                 })
-                .ToListAsync(cancellationToken);
+                 });
 
-            return items;
+            var result = new SyncListProjection<SyncTagProjection>()
+            {
+                Count = await items.CountAsync(cancellationToken),
+                Items = await items.ToListAsync(cancellationToken)
+            };
+
+            return result;
         }
     }
 }

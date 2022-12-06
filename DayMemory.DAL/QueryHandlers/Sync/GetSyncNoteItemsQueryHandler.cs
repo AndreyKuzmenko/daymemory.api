@@ -11,7 +11,7 @@ using DayMemory.Core.Queries.Sync.Projections;
 
 namespace DayMemory.DAL.QueryHandlers.Notes
 {
-    public class GetSyncNoteItemsQueryHandler : IRequestHandler<GetSyncNoteItemsQuery, IList<SyncNoteItemProjection>>
+    public class GetSyncNoteItemsQueryHandler : IRequestHandler<GetSyncNoteItemsQuery, SyncListProjection<SyncNoteItemProjection>>
     {
         private readonly IReadDbContext _readDbContext;
         private readonly IUrlResolver _urlResolver;
@@ -22,7 +22,7 @@ namespace DayMemory.DAL.QueryHandlers.Notes
             _urlResolver = urlResolver;
         }
 
-        public async Task<IList<SyncNoteItemProjection>> Handle(GetSyncNoteItemsQuery request, CancellationToken cancellationToken)
+        public async Task<SyncListProjection<SyncNoteItemProjection>> Handle(GetSyncNoteItemsQuery request, CancellationToken cancellationToken)
         {
             var imageUrlTemplate = _urlResolver.GetImageUrlTemplate(ImageSource.Note, request.UserId!);
             var query = _readDbContext.GetQuery<NoteItem>()
@@ -33,7 +33,7 @@ namespace DayMemory.DAL.QueryHandlers.Notes
 
             DateTimeOffset? lastSyncDateTime = request.LastSyncDateTime.HasValue ? DateTimeOffset.FromUnixTimeMilliseconds(request.LastSyncDateTime.Value) : null;
 
-            var items = await query
+            var items = query
                 .Where(x => x.UserId == request.UserId)
                 .OrderBy(d => d.ModifiedDate)
                 .Where(x => lastSyncDateTime == null || x.ModifiedDate > lastSyncDateTime)
@@ -65,10 +65,15 @@ namespace DayMemory.DAL.QueryHandlers.Notes
                              Longitude = entity.Location.Longitude
                          } : null,
                      }
-                 })
-                .ToListAsync(cancellationToken);
+                 });
 
-            return items;
+            var result = new SyncListProjection<SyncNoteItemProjection>()
+            {
+                Count = await items.CountAsync(cancellationToken),
+                Items = await items.ToListAsync(cancellationToken)
+            };
+
+            return result;
         }
     }
 }

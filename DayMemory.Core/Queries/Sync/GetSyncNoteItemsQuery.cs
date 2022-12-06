@@ -5,7 +5,7 @@ using MediatR;
 
 namespace DayMemory.Core.Queries
 {
-    public class GetSyncNoteItemsQuery : IRequest<IList<SyncNoteItemProjection>>
+    public class GetSyncNoteItemsQuery : IRequest<SyncListProjection<SyncNoteItemProjection>>
     {
         public int Top { get; set; } = 10;
 
