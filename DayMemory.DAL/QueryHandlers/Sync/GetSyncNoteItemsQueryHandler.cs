@@ -37,7 +37,7 @@ namespace DayMemory.DAL.QueryHandlers.Notes
                 .Where(x => x.UserId == request.UserId)
                 .OrderBy(d => d.ModifiedDate)
                 .Where(x => lastSyncDateTime == null || x.ModifiedDate > lastSyncDateTime)
-                .Take(request.Top)
+
                  .Select(entity => new SyncNoteItemProjection()
                  {
                      Id = entity.Id,
@@ -70,7 +70,7 @@ namespace DayMemory.DAL.QueryHandlers.Notes
             var result = new SyncListProjection<SyncNoteItemProjection>()
             {
                 Count = await items.CountAsync(cancellationToken),
-                Items = await items.ToListAsync(cancellationToken)
+                Items = await items.Take(request.Top).ToListAsync(cancellationToken)
             };
 
             return result;
