@@ -55,6 +55,7 @@ namespace DayMemory.DAL.QueryHandlers.Notes
                          Id = i.Image!.Id,
                          Name = i.Image.FileName,
                          Url = string.Format(imageUrlTemplate, i.Image.Id),
+                         FileSize = i.Image.FileSize,
                          Width = i.Image.Width,
                          Height = i.Image.Height
                      }).ToList(),

@@ -14,6 +14,8 @@ namespace DayMemory.Core.Queries.Projections
 
         public int Height { get; set; }
 
+        public int FileSize { get; set; }
+
         public int Width { get; set; }
     }
 }
