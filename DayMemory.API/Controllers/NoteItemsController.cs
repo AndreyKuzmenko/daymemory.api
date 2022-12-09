@@ -44,7 +44,9 @@ namespace DayMemory.API.Controllers
         {
             var userId = User.Identity!.Name;
             command.UserId = userId;
-
+            
+            throw new DuplicateItemException(command.NoteId!);
+            
             var item = await _mediator.Send(new GetNoteItemQuery() { UserId = User.Identity!.Name, NoteItemId = command.NoteId }, ct);
             if (item != null)
             {
