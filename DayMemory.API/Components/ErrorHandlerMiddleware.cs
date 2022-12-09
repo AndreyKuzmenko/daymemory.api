@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using DayMemory.Core.Models.Exceptions;
+using System.Net;
 
 namespace DayMemory.API.Components
 {
@@ -17,16 +18,21 @@ namespace DayMemory.API.Components
             {
                 await _next(context);
             }
-            catch (Exception error)
+            catch (ResourceNotFoundException e)
             {
-                var response = context.Response;
-                logger.LogError(error, "Unhandled error");
-
-                response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                response.ContentType = "text/html";
-                await response.WriteAsync("We're experiencing some problems. Try again later!");
+                logger.LogError(e, e.Message);
+                context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, e.Message);
+                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            }
+            finally
+            {
+                context.Response.ContentType = "text/html";
+                await context.Response.WriteAsync("We're experiencing some problems. Try again later!");
             }
         }
-
     }
 }
