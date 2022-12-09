@@ -5,6 +5,8 @@ using DayMemory.Core.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using DayMemory.Core.Models.Personal;
+using DayMemory.Core.Models.Exceptions;
 
 namespace DayMemory.API.Controllers
 {
@@ -43,6 +45,11 @@ namespace DayMemory.API.Controllers
             var userId = User.Identity!.Name;
             command.UserId = userId;
 
+            var item = await _mediator.Send(new GetNoteItemQuery() { UserId = User.Identity!.Name, NoteItemId = command.NoteId }, ct);
+            if (item != null)
+            {
+                throw new DuplicateItemException(command.NoteId!);
+            }
             var itemId = await _mediator.Send(command);
             var query = new GetNoteItemQuery { NoteItemId = itemId, UserId = userId };
             var result = await _mediator.Send(query, ct);

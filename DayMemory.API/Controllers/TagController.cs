@@ -1,4 +1,5 @@
 using DayMemory.Core.Commands;
+using DayMemory.Core.Models.Exceptions;
 using DayMemory.Core.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -41,6 +42,12 @@ namespace DayMemory.API.Controllers
         {
             var userId = User.Identity!.Name!;
             command.UserId = userId;
+
+            var item = await _mediator.Send(new GetTagQuery() { UserId = User.Identity!.Name, TagId = command.TagId }, ct);
+            if (item != null)
+            {
+                throw new DuplicateItemException(command.TagId!);
+            }
 
             var itemId = await _mediator.Send(command);
             var query = new GetTagQuery { TagId = itemId, UserId = userId };

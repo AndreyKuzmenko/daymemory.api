@@ -7,6 +7,7 @@ using DayMemory.Core.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using DayMemory.Core.Models.Exceptions;
 
 namespace DayMemory.API.Controllers
 {

@@ -36,6 +36,7 @@ namespace DayMemory.API.Controllers
             return Ok();
         }
 
+        
         [HttpPost]
         [Route("api/images/{source}/{imageId}")]
         public async Task<ActionResult<ImageDto>> Upload([FromRoute] string source, [FromRoute] string imageId, [FromForm] IFormFile file)
@@ -52,7 +53,7 @@ namespace DayMemory.API.Controllers
                 return BadRequest();
             }
 
-
+            //TODO: Inconsistency with other APIs. Should throw exception if file exists
             var image = await _imageRepository.LoadByIdAsync(imageId);
             if (image != null)
             {
