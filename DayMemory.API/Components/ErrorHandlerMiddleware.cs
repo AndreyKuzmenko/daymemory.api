@@ -22,14 +22,13 @@ namespace DayMemory.API.Components
             {
                 logger.LogError(e, e.Message);
                 context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                context.Response.ContentType = "text/html";
+                await context.Response.WriteAsync("We're experiencing some problems. Try again later!");
             }
             catch (Exception e)
             {
                 logger.LogError(e, e.Message);
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            }
-            finally
-            {
                 context.Response.ContentType = "text/html";
                 await context.Response.WriteAsync("We're experiencing some problems. Try again later!");
             }
