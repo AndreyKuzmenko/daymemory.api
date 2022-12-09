@@ -1,5 +1,6 @@
 ﻿using DayMemory.Core.Commands;
 using DayMemory.Core.Interfaces.Repositories;
+using DayMemory.Core.Models.Exceptions;
 using MediatR;
 using Microsoft.Extensions.Internal;
 
@@ -19,6 +20,11 @@ namespace DayMemory.Core.CommandHandlers
         protected override async Task Handle(UpdateTagCommand request, CancellationToken cancellationToken)
         {
             var item = await _tagRepository.LoadByIdAsync(request.TagId!, cancellationToken);
+            if (item == null)
+            {
+                throw new ResourceNotFoundException("Tag is not found", request.TagId!);
+            }
+
             item.Text = request.Text;
             item.OrderRank = request.OrderRank;
             item.ModifiedDate = _clock.UtcNow;

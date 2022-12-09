@@ -25,7 +25,7 @@ namespace DayMemory.Core.CommandHandlers
             var item = await _questionListRepository.LoadByIdAsync(request.QuestionListId!, cancellationToken);
             if (item == null)
             {
-                throw new ResourceNotFoundException();
+                throw new ResourceNotFoundException("Question List is not found", request.QuestionListId!);
             }
 
             item.Text = request.Text ?? "";

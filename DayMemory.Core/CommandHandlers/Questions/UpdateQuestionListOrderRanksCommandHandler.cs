@@ -27,7 +27,7 @@ namespace DayMemory.Core.CommandHandlers
                 var item = await _questionListRepository.LoadByIdAsync(questionList.QuestionListId!, cancellationToken);
                 if (item == null)
                 {
-                    throw new ResourceNotFoundException();
+                    throw new ResourceNotFoundException("Question List is not found", questionList.QuestionListId!);
                 }
                 item.ModifiedDate = _clock.UtcNow;
                 item.OrderRank = questionList.OrderRank;

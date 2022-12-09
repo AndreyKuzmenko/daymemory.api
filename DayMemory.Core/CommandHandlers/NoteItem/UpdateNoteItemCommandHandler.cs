@@ -1,5 +1,6 @@
 ﻿using DayMemory.Core.Commands;
 using DayMemory.Core.Interfaces.Repositories;
+using DayMemory.Core.Models.Exceptions;
 using DayMemory.Core.Models.Personal;
 using DayMemory.Core.Services;
 using MediatR;
@@ -23,6 +24,10 @@ namespace DayMemory.Core.CommandHandlers
         protected override async Task Handle(UpdateNoteItemCommand request, CancellationToken cancellationToken)
         {
             var note = await _noteItemRepository.LoadByIdAsync(request.NoteId!, cancellationToken);
+            if (note == null)
+            {
+                throw new ResourceNotFoundException("Note is not found", request.NoteId!);
+            }
 
             string? locationId = note.LocationId;
             if (note.Location == null && request.Location != null && request.Location.Address != null)
