@@ -26,6 +26,7 @@ namespace DayMemory.Core.CommandHandlers
                 throw new ResourceNotFoundException("Notebook is not found", request.NotebookId!);
             }
             item.Title = request.Title;
+            item.OrderRank = request.OrderRank;
             item.ModifiedDate = _clock.UtcNow;
             await _notebookRepository.UpdateAsync(item, cancellationToken);
         }

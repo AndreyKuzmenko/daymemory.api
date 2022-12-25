@@ -13,6 +13,8 @@ namespace DayMemory.Core.Models.Personal
 
         public virtual User? User { get; set; }
 
+        public int OrderRank { get; set; }
+
         public bool IsDeleted { get; set; }
     }
 }
