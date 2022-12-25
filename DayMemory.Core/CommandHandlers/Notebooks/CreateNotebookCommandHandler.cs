@@ -25,7 +25,8 @@ namespace DayMemory.Core.CommandHandlers
                 Id = request.NotebookId,
                 UserId = request.UserId,
                 Title = request.Title,
-                OrderRank= request.OrderRank,
+                OrderRank = request.OrderRank,
+                ShowInReview = false,
                 CreatedDate = _clock.UtcNow,
                 ModifiedDate = _clock.UtcNow,
             };

@@ -27,6 +27,7 @@ namespace DayMemory.DAL.QueryHandlers.Notebooks
                 Id = t.Id,
                 Title = t.Title,
                 OrderRank = t.OrderRank,
+                ShowInReview = t.ShowInReview,
                 ModifiedDate = t.ModifiedDate.ToUnixTimeMilliseconds(),
             }).FirstOrDefaultAsync(x => x.Id == request.NotebookId!, cancellationToken);
         }

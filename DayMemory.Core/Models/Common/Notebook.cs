@@ -15,6 +15,8 @@ namespace DayMemory.Core.Models.Personal
 
         public int OrderRank { get; set; }
 
+        public bool ShowInReview { get; set; }
+
         public bool IsDeleted { get; set; }
     }
 }

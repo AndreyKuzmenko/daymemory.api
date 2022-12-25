@@ -8,6 +8,8 @@
 
         public int OrderRank { get; set; }
 
+        public bool ShowInReview { get; set; }
+
         public long? ModifiedDate { get; set; }
     }
 }

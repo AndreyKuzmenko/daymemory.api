@@ -23,7 +23,14 @@ namespace DayMemory.DAL.QueryHandlers.Tags
                     .AsNoTracking()
                     .Where(x => x.UserId == request.UserId && !x.IsDeleted)
                     .OrderBy(t => t.CreatedDate)
-                    .Select(t => new NotebookProjection() { Id = t.Id, Title = t.Title, OrderRank = t.OrderRank, ModifiedDate = t.ModifiedDate.ToUnixTimeMilliseconds(), })
+                    .Select(t => new NotebookProjection()
+                    {
+                        Id = t.Id,
+                        Title = t.Title,
+                        OrderRank = t.OrderRank,
+                        ModifiedDate = t.ModifiedDate.ToUnixTimeMilliseconds(),
+                        ShowInReview = t.ShowInReview,
+                    })
                     .ToListAsync(cancellationToken);
         }
     }
