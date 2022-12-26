@@ -9,12 +9,12 @@ namespace DayMemory.Core.CommandHandlers
 {
     internal class CreateNotebookCommandHandler : IRequestHandler<CreateNotebookCommand, string>
     {
-        private readonly INotebookRepository _tagRepository;
+        private readonly INotebookRepository _notebookRepository;
         private readonly ISystemClock _clock;
 
         public CreateNotebookCommandHandler(INotebookRepository tagRepository, ISystemClock clock)
         {
-            _tagRepository = tagRepository;
+            _notebookRepository = tagRepository;
             _clock = clock;
         }
 
@@ -31,7 +31,7 @@ namespace DayMemory.Core.CommandHandlers
                 ModifiedDate = _clock.UtcNow,
             };
 
-            await _tagRepository.CreateAsync(item, cancellationToken);
+            await _notebookRepository.CreateAsync(item, cancellationToken);
             return item.Id!;
         }
     }
