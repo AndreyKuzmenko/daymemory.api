@@ -27,6 +27,7 @@ namespace DayMemory.Core.CommandHandlers
             }
             item.Title = request.Title;
             item.OrderRank = request.OrderRank;
+            item.ShowInReview = request.ShowInReview;
             item.ModifiedDate = _clock.UtcNow;
             await _notebookRepository.UpdateAsync(item, cancellationToken);
         }
