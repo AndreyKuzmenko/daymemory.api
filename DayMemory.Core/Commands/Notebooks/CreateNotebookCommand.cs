@@ -12,6 +12,8 @@ namespace DayMemory.Core.Commands
 
         public string? UserId { get; set; }
 
+        public bool ShowInReview { get; set; }
+
         public int OrderRank { get; set; }
     }
 }

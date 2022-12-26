@@ -26,7 +26,7 @@ namespace DayMemory.Core.CommandHandlers
                 UserId = request.UserId,
                 Title = request.Title,
                 OrderRank = request.OrderRank,
-                ShowInReview = false,
+                ShowInReview = request.ShowInReview,
                 CreatedDate = _clock.UtcNow,
                 ModifiedDate = _clock.UtcNow,
             };
