@@ -28,6 +28,7 @@ namespace DayMemory.Core.CommandHandlers
                 OrderRank = request.OrderRank,
                 ShowInReview = request.ShowInReview,
                 CreatedDate = _clock.UtcNow,
+                SortingType = request.SortingType,
                 ModifiedDate = _clock.UtcNow,
             };
 

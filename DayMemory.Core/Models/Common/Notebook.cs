@@ -3,6 +3,13 @@ using DayMemory.Core.Services;
 
 namespace DayMemory.Core.Models.Personal
 {
+    public enum SortingType
+    {
+        ByCreatedDate = 0,
+
+        ByModifiedDate = 1
+    }
+    
     public class Notebook : BaseEntity
     {
         public string? Title { get; set; }
@@ -18,5 +25,7 @@ namespace DayMemory.Core.Models.Personal
         public bool ShowInReview { get; set; }
 
         public bool IsDeleted { get; set; }
+
+        public SortingType SortingType { get; set; }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace DayMemory.Core.Queries.Notebooks.Projections
+﻿using DayMemory.Core.Models.Personal;
+
+namespace DayMemory.Core.Queries.Notebooks.Projections
 {
     public class NotebookProjection
     {
@@ -11,5 +13,7 @@
         public bool ShowInReview { get; set; }
 
         public long? ModifiedDate { get; set; }
+
+        public SortingType SortingType { get; set; }
     }
 }

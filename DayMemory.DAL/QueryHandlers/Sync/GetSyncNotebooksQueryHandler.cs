@@ -39,6 +39,7 @@ namespace DayMemory.DAL.QueryHandlers.Notes
                          Title = entity.Title,
                          OrderRank = entity.OrderRank,
                          ShowInReview = entity.ShowInReview,
+                         SortingType = entity.SortingType,
                          ModifiedDate = entity.ModifiedDate.ToUnixTimeMilliseconds(),
                      }
                  });
