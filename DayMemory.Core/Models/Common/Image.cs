@@ -2,7 +2,7 @@
 
 namespace DayMemory.Core.Models.Personal
 {
-    public enum ImageSource
+    public enum FileSource
     {
         Note = 1,
 
@@ -24,9 +24,7 @@ namespace DayMemory.Core.Models.Personal
         public virtual User? User { get; set; }
 
         public string? UserId { get; set; }
-
-        public ImageSource? Source { get; set; }
-
+        
         public Image()
         {
         }

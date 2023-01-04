@@ -8,7 +8,7 @@ namespace DayMemory.Core.Services
 {
     public interface IUrlResolver
     {
-        string GetImageUrlTemplate(ImageSource source, string userId);
+        string GetFileUrlTemplate(string userId);
     }
 
     public class UrlResolver : IUrlResolver
@@ -22,9 +22,9 @@ namespace DayMemory.Core.Services
             this._urlSettings = urlSettings;
         }
 
-        public string GetImageUrlTemplate(ImageSource source, string userId)
+        public string GetFileUrlTemplate(string userId)
         {
-            return $"{_urlSettings.BlobStorageRootUrl}/{source.ToString().ToLowerInvariant()}-images/{userId}/{{0}}";
+            return $"{_urlSettings.BlobStorageRootUrl}/note-images/{userId}/{{0}}";
         }
     }
 }

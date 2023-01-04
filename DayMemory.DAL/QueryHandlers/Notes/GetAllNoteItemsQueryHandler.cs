@@ -22,7 +22,7 @@ namespace DayMemory.DAL.QueryHandlers.Notes
 
         public async Task<IList<NoteItemProjection>> Handle(GetAllNoteItemsQuery request, CancellationToken cancellationToken)
         {
-            var imageUrlTemplate = _urlResolver.GetImageUrlTemplate(ImageSource.Note, request.UserId!);
+            var imageUrlTemplate = _urlResolver.GetFileUrlTemplate(request.UserId!);
 
             var query = _readDbContext.GetQuery<NoteItem>()
                 .Include(i => i.Location)

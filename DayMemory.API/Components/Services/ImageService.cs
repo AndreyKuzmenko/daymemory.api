@@ -4,24 +4,24 @@ using DayMemory.Core.Settings;
 
 namespace DayMemory.Web.Components.Services
 {
-    public interface IImageService
+    public interface IFileService
     {
-        Task<string> UploadFileToCloudStorage(Stream stream, string contentType, string fileId, string source);
+        Task<string> UploadFileToCloudStorage(Stream stream, string contentType, string fileId);
     }
 
-    public class ImageService : IImageService
+    public class AzureFileService : IFileService
     {
         private readonly IConfiguration configuration;
         private readonly UrlSettings _urlSettings;
 
-        public ImageService(IConfiguration configuration, UrlSettings urlSettings)
+        public AzureFileService(IConfiguration configuration, UrlSettings urlSettings)
         {
             this.configuration = configuration;
             this._urlSettings = urlSettings;
         }
-        public async Task<string> UploadFileToCloudStorage(Stream stream, string contentType, string fileId, string source)
+        public async Task<string> UploadFileToCloudStorage(Stream stream, string contentType, string fileId)
         {
-            var containerName = source.ToLower() + "-images";
+            var containerName = "note-images";
             var blobContainerClient = new BlobContainerClient(_urlSettings.StorageConnectionString, containerName);
 
             BlobClient blob = blobContainerClient.GetBlobClient(fileId);

@@ -2,7 +2,7 @@
 
 namespace DayMemory.Core.Models
 {
-    public class ImageDto
+    public class FileDto
     {
         public string? Id { get; set; }
         
