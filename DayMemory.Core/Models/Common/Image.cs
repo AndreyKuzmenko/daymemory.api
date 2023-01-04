@@ -9,7 +9,7 @@ namespace DayMemory.Core.Models.Personal
         Profile = 2
     }
 
-    public class Image : BaseEntity
+    public class File : BaseEntity
     {
         public string? FileName { get; set; }
 
@@ -25,7 +25,7 @@ namespace DayMemory.Core.Models.Personal
 
         public string? UserId { get; set; }
         
-        public Image()
+        public File()
         {
         }
     }

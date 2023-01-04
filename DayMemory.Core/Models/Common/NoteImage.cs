@@ -3,11 +3,11 @@ using DayMemory.Core.Models.Common;
 
 namespace DayMemory.Core.Models.Personal
 {
-    public class NoteImage : BaseEntity
+    public class NoteFile : BaseEntity
     {
-        public virtual string? ImageId { get; set; }
+        public virtual string? FileId { get; set; }
 
-        public virtual Image? Image { get; set; }
+        public virtual File? File { get; set; }
 
         public virtual string? NoteItemId { get; set; }
 

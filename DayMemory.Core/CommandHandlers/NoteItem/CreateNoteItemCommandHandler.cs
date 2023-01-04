@@ -51,7 +51,7 @@ namespace DayMemory.Core.CommandHandlers
             };
 
 
-            item.SetImages(request.Images ?? new string[] { });
+            item.SetFiles(request.Files ?? new string[] { });
 
             await _noteItemRepository.CreateAsync(item, cancellationToken);
 

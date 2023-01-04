@@ -46,7 +46,7 @@ namespace DayMemory.Core.CommandHandlers
             }
 
             note.Text = request.Text;
-            note.SetImages(request.Images ?? Array.Empty<string>());
+            note.SetFiles(request.Files ?? Array.Empty<string>());
             note.LocationId = locationId;
             note.NotebookId = request.NotebookId;
             note.Date = DateTimeOffset.FromUnixTimeMilliseconds(request.Date);

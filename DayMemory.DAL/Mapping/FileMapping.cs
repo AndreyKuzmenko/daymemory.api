@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DayMemory.DAL.Mapping
 {
-    public class ImageMapping : IEntityTypeConfiguration<Image>
+    public class FileMapping : IEntityTypeConfiguration<Core.Models.Personal.File>
     {
-        public void Configure(EntityTypeBuilder<Image> builder)
+        public void Configure(EntityTypeBuilder<Core.Models.Personal.File> builder)
         {
             builder.Property(x => x.Id).HasMaxLength(50);
 

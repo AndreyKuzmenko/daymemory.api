@@ -4,9 +4,9 @@ using DayMemory.Core.Models.Personal;
 
 namespace DayMemory.DAL.Repositories
 {
-    public class ImageRepository : Repository<Image>, IFileRepository
+    public class FileRepository : Repository<Core.Models.Personal.File>, IFileRepository
     {
-        public ImageRepository(DayMemoryDbContext dbContext) : base(dbContext)
+        public FileRepository(DayMemoryDbContext dbContext) : base(dbContext)
         {
         }
     }

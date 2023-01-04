@@ -12,7 +12,7 @@ namespace DayMemory.Core.Commands
 
         public string? Text { get; set; }
 
-        public string[]? Images { get; set; }
+        public string[]? Files { get; set; }
 
         public long Date { get; set; }
 

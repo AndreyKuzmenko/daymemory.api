@@ -17,7 +17,7 @@ namespace DayMemory.Core.Models.Personal
 
         public virtual Location? Location { get; set; }
 
-        public virtual List<NoteImage> Images { get; set; } = new List<NoteImage>();
+        public virtual List<NoteFile> Files { get; set; } = new List<NoteFile>();
 
         public string? UserId { get; set; }
 
@@ -25,23 +25,23 @@ namespace DayMemory.Core.Models.Personal
 
         public bool IsDeleted { get; set; }
 
-        public void SetImages(string[] imageIds)
+        public void SetFiles(string[] fileIds)
         {
-            Images.Clear();
+            Files.Clear();
             int i = 0;
-            foreach (var imageId in imageIds)
+            foreach (var imageId in fileIds)
             {
-                var dt = new NoteImage
+                var dt = new NoteFile
                 {
                     Id = StringUtils.GenerateUniqueString(),
-                    ImageId = imageId,
+                    FileId = imageId,
                     NoteItemId = Id,
                     OrderRank = i++,
                     CreatedDate = DateTimeOffset.UtcNow,
                     ModifiedDate = DateTimeOffset.UtcNow,
                 };
 
-                Images.Add(dt);
+                Files.Add(dt);
             }
         }
     }

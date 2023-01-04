@@ -14,7 +14,7 @@ namespace DayMemory.DAL.Repositories
         {
             return base.GetQuery()
                 .Include(i => i.Location)
-                .Include(i => i.Images).ThenInclude(x => x.Image);
+                .Include(i => i.Files).ThenInclude(x => x.File);
         }
 
     }

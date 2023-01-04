@@ -25,7 +25,7 @@ namespace DayMemory.Core.Commands
 
         public long Date { get; set; }
 
-        public string[]? Images { get; set; }
+        public string[]? Files { get; set; }
 
         public LocationCommandDto? Location { get; set; }
 

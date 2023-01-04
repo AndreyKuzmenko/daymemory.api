@@ -22,12 +22,12 @@ namespace DayMemory.DAL.QueryHandlers.Notes
 
         public async Task<IList<NoteItemProjection>> Handle(GetAllNoteItemsQuery request, CancellationToken cancellationToken)
         {
-            var imageUrlTemplate = _urlResolver.GetFileUrlTemplate(request.UserId!);
+            var fileUrlTemplate = _urlResolver.GetFileUrlTemplate(request.UserId!);
 
             var query = _readDbContext.GetQuery<NoteItem>()
                 .Include(i => i.Location)
-                .Include(i => i.Images)
-                .ThenInclude(x => x.Image)
+                .Include(i => i.Files)
+                .ThenInclude(x => x.File)
                 .AsNoTracking();
 
             if (!string.IsNullOrEmpty(request.Tag))
@@ -50,14 +50,14 @@ namespace DayMemory.DAL.QueryHandlers.Notes
                      Text = entity.Text,
                      ModifiedDate = entity.ModifiedDate.ToUnixTimeMilliseconds(),
                      Date = entity.Date.ToUnixTimeMilliseconds(),
-                     Images = entity.Images.OrderBy(x => x.OrderRank).ThenBy(x => x.Image!.CreatedDate).Select(i => new ImageProjection
+                     Images = entity.Files.OrderBy(x => x.OrderRank).ThenBy(x => x.File!.CreatedDate).Select(i => new ImageProjection
                      {
-                         Id = i.Image!.Id,
-                         Name = i.Image.FileName,
-                         Url = string.Format(imageUrlTemplate, i.Image.Id),
-                         FileSize = i.Image.FileSize,
-                         Width = i.Image.Width,
-                         Height = i.Image.Height
+                         Id = i.File!.Id,
+                         Name = i.File.FileName,
+                         Url = string.Format(fileUrlTemplate, i.File.Id),
+                         FileSize = i.File.FileSize,
+                         Width = i.File.Width,
+                         Height = i.File.Height
                      }).ToList(),
                      Location = entity.Location != null ? new LocationProjection()
                      {

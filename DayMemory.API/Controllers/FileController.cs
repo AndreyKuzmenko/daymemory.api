@@ -37,7 +37,7 @@ namespace DayMemory.API.Controllers
         }
 
         [HttpPost]
-        [Route("api/files/{source}/{fileId}")]
+        [Route("api/files/{fileId}")]
         public async Task<ActionResult<FileDto>> Upload([FromRoute] string fileId, [FromForm] IFormFile file)
         {
             var userId = User.Identity!.Name!;
@@ -80,7 +80,7 @@ namespace DayMemory.API.Controllers
 
         private async Task SaveFile(string fileName, string contentType, int size, int width, int height, string newId, string userId)
         {
-            await _fileRepository.CreateAsync(new Image
+            await _fileRepository.CreateAsync(new Core.Models.Personal.File
             {
                 Id = newId,
                 FileName = fileName,

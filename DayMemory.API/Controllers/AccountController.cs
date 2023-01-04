@@ -240,11 +240,6 @@ namespace DayMemory.Web.Areas.Mobile
                     _logger.LogError("Failed to create account");
                     return BadRequest(ModelState);
                 }
-
-                //if (!string.IsNullOrEmpty(model.ImageUrl))
-                //{
-                //    await DownloadUserImage(model, user);
-                //}
             }
 
             await _userManager.AddLoginAsync(user, new UserLoginInfo(model.ProviderType, model.Id, model.FirstName + model.LastName));
