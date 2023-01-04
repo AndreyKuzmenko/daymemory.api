@@ -18,7 +18,7 @@ namespace DayMemory.DAL.Mapping
 
             builder.HasIndex(x => new { x.FileId, x.NoteItemId });
 
-            builder.ToTable("NoteImage");
+            builder.ToTable("NoteFile");
         }
     }
 }
