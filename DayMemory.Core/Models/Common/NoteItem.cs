@@ -29,12 +29,12 @@ namespace DayMemory.Core.Models.Personal
         {
             Files.Clear();
             int i = 0;
-            foreach (var imageId in fileIds)
+            foreach (var fileId in fileIds)
             {
                 var dt = new NoteFile
                 {
                     Id = StringUtils.GenerateUniqueString(),
-                    FileId = imageId,
+                    FileId = fileId,
                     NoteItemId = Id,
                     OrderRank = i++,
                     CreatedDate = DateTimeOffset.UtcNow,

@@ -4,7 +4,7 @@ using DayMemory.Core.Models.Personal;
 
 namespace DayMemory.Core.Queries.Projections
 {
-    public class ImageProjection
+    public class FileProjection
     {
         public string? Id { get; set; }
 

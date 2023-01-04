@@ -22,7 +22,7 @@ namespace DayMemory.DAL.QueryHandlers.Notes
 
         public async Task<NoteItemProjection?> Handle(GetNoteItemQuery request, CancellationToken cancellationToken)
         {
-            var imageUrlTemplate = _urlResolver.GetFileUrlTemplate(request.UserId!);
+            var fileUrlTemplate = _urlResolver.GetFileUrlTemplate(request.UserId!);
             var query = _readDbContext.GetQuery<NoteItem>()
                 .Include(i => i.Location)
                 .Include(i => i.Files)
@@ -30,7 +30,7 @@ namespace DayMemory.DAL.QueryHandlers.Notes
                 .AsNoTracking();
 
 
-            var topic = await query
+            var item = await query
                 .Where(x => x.UserId == request.UserId)
                 .Where(x => !x.IsDeleted)
                  .Select(entity => new NoteItemProjection
@@ -40,11 +40,11 @@ namespace DayMemory.DAL.QueryHandlers.Notes
                      Text = entity.Text,
                      ModifiedDate = entity.ModifiedDate.ToUnixTimeMilliseconds(),
                      Date = entity.Date.ToUnixTimeMilliseconds(),
-                     Images = entity.Files.OrderBy(x => x.OrderRank).ThenBy(x => x.File!.CreatedDate).Select(i => new ImageProjection
+                     Files = entity.Files.OrderBy(x => x.OrderRank).ThenBy(x => x.File!.CreatedDate).Select(i => new FileProjection
                      {
                          Id = i.File!.Id,
                          Name = i.File.FileName,
-                         Url = string.Format(imageUrlTemplate, i.File.Id),
+                         Url = string.Format(fileUrlTemplate, i.File.Id),
                          FileSize = i.File.FileSize,
                          Width = i.File.Width,
                          Height = i.File.Height
@@ -58,7 +58,7 @@ namespace DayMemory.DAL.QueryHandlers.Notes
                  })
                 .FirstOrDefaultAsync(x => x.Id == request.NoteItemId, cancellationToken);
 
-            return topic;
+            return item;
         }
     }
 }
