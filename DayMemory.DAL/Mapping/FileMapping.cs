@@ -21,7 +21,7 @@ namespace DayMemory.DAL.Mapping
 
             builder.HasOne(x => x.User).WithMany().OnDelete(DeleteBehavior.NoAction);
 
-            builder.ToTable("Image");
+            builder.ToTable("FileItem");
         }
     }
 }
