@@ -5,15 +5,15 @@ namespace DayMemory.Core.Queries.Projections
 {
     public class NoteItemProjection
     {
-        public string? Id { get; set; }
+        public required string Id { get; set; }
 
-        public string? NotebookId { get; set; }
+        public required string NotebookId { get; set; }
 
-        public string? Text { get; set; }
+        public required string Text { get; set; }
             
-        public long? Date { get; set; }
+        public required long Date { get; set; }
 
-        public long? ModifiedDate { get; set; }
+        public required long ModifiedDate { get; set; }
 
         public List<FileProjection>? Files { get; set; }
 

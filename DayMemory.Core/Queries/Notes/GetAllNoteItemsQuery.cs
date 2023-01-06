@@ -1,6 +1,7 @@
 ﻿using DayMemory.Core.Queries.Tags.Projections;
 using DayMemory.Core.Queries.Projections;
 using MediatR;
+using System.Text.Json.Serialization;
 
 namespace DayMemory.Core.Queries
 {
@@ -12,6 +13,7 @@ namespace DayMemory.Core.Queries
 
         public string? Tag { get; set; }
 
-        public string? UserId { get; set; }
+        [JsonIgnore]
+        public required string UserId { get; set; }
     }
 }

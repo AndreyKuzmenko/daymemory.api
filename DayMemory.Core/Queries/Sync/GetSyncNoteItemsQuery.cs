@@ -2,6 +2,7 @@
 using DayMemory.Core.Queries.Projections;
 using DayMemory.Core.Queries.Sync.Projections;
 using MediatR;
+using System.Text.Json.Serialization;
 
 namespace DayMemory.Core.Queries
 {
@@ -11,6 +12,7 @@ namespace DayMemory.Core.Queries
 
         public long? LastSyncDateTime { get; set; }
 
-        public string? UserId { get; set; }
+        [JsonIgnore]
+        public required string UserId { get; set; }
     }
 }

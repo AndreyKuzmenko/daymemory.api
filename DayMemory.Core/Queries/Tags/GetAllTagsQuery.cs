@@ -6,6 +6,6 @@ namespace DayMemory.Core.Queries
 {
     public class GetAllTagsQuery : IRequest<IList<TagProjection>>
     {
-        public string? UserId { get; set; }
+        public required string UserId { get; set; }
     }
 }

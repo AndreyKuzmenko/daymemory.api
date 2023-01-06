@@ -2,12 +2,12 @@
 {
     public class TagProjection
     {
-        public string? Id { get; set; }
+        public required string Id { get; set; }
 
-        public string? Text { get; set; }
+        public required string Text { get; set; }
 
         public int OrderRank { get; set; }
 
-        public long? ModifiedDate { get; set; }
+        public required long ModifiedDate { get; set; }
     }
 }

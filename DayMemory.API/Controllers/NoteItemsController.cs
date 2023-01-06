@@ -42,7 +42,7 @@ namespace DayMemory.API.Controllers
         [HttpPost()]
         public async Task<ActionResult> Post([FromBody] CreateNoteItemCommand command, CancellationToken ct)
         {
-            var userId = User.Identity!.Name;
+            var userId = User.Identity!.Name!;
             command.UserId = userId;
 
             var item = await _mediator.Send(new GetNoteItemQuery() { UserId = User.Identity!.Name, NoteItemId = command.NoteId }, ct);
@@ -61,6 +61,7 @@ namespace DayMemory.API.Controllers
         public async Task<ActionResult> Put(string noteId, [FromBody] UpdateNoteItemCommand command, CancellationToken ct)
         {
             command.NoteId = noteId;
+            command.UserId = User.Identity!.Name!;
             await _mediator.Send(command);
             var query = new GetNoteItemQuery { NoteItemId = noteId, UserId = User.Identity!.Name };
             var result = await _mediator.Send(query, ct);
@@ -70,7 +71,7 @@ namespace DayMemory.API.Controllers
         [HttpDelete("{noteId}")]
         public async Task<ActionResult> DeleteTopic(string noteId, CancellationToken ct)
         {
-            await _mediator.Send(new DeleteNoteItemCommand { NoteItemId = noteId }, ct);
+            await _mediator.Send(new DeleteNoteItemCommand { NoteItemId = noteId, UserId = User.Identity!.Name! }, ct);
             return Ok();
         }
     }

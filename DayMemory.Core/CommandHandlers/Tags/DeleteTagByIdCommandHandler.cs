@@ -21,6 +21,10 @@ namespace DayMemory.Core.CommandHandlers
             var item = await _tagRepository.LoadByIdAsync(request.TagId!, cancellationToken);
             if (item != null)
             {
+                if (item.UserId != request.UserId)
+                {
+                    throw new InvalidOperationException("No permission to delete a tag");
+                }
                 item.IsDeleted = true;
                 item.ModifiedDate = _clock.UtcNow;
                 await _tagRepository.UpdateAsync(item, cancellationToken);

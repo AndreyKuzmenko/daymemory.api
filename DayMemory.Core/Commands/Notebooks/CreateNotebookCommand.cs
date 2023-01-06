@@ -8,12 +8,12 @@ namespace DayMemory.Core.Commands
 {
     public class CreateNotebookCommand : IRequest<string>
     {
-        public string? NotebookId { get; set; }
+        public required string NotebookId { get; set; }
 
-        public string? Title { get; set; }
+        public required string Title { get; set; }
 
         [JsonIgnore]
-        public string? UserId { get; set; }
+        public required string UserId { get; set; }
 
         public bool ShowInReview { get; set; }
 

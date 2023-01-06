@@ -22,7 +22,7 @@ namespace DayMemory.API.Controllers
         [HttpGet("notes")]
         public async Task<IActionResult> GetAllNotes([FromQuery] GetSyncNoteItemsQuery query, CancellationToken ct)
         {
-            query.UserId = User.Identity!.Name;
+            query.UserId = User.Identity!.Name!;
             var items = await _mediator.Send(query, ct);
             return Ok(items);
         }
@@ -30,7 +30,7 @@ namespace DayMemory.API.Controllers
         [HttpGet("notebooks")]
         public async Task<IActionResult> GetAllNotebooks([FromQuery] GetSyncNotebooksQuery query, CancellationToken ct)
         {
-            query.UserId = User.Identity!.Name;
+            query.UserId = User.Identity!.Name!;
             var items = await _mediator.Send(query, ct);
             return Ok(items);
         }
@@ -38,7 +38,7 @@ namespace DayMemory.API.Controllers
         [HttpGet("tags")]
         public async Task<IActionResult> GetAllTags([FromQuery] GetSyncTagsQuery query, CancellationToken ct)
         {
-            query.UserId = User.Identity!.Name;
+            query.UserId = User.Identity!.Name!;
             var items = await _mediator.Send(query, ct);
             return Ok(items);
         }

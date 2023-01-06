@@ -7,6 +7,6 @@ namespace DayMemory.Core.Queries.Sync.Projections
     {
         public int Count { get; set; }
 
-        public List<T>? Items { get; set; }
+        public required List<T> Items { get; set; }
     }
 }

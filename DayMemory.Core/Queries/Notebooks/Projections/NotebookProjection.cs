@@ -4,9 +4,9 @@ namespace DayMemory.Core.Queries.Notebooks.Projections
 {
     public class NotebookProjection
     {
-        public string? Id { get; set; }
+        public required string Id { get; set; }
 
-        public string? Title { get; set; }
+        public required string Title { get; set; }
 
         public int OrderRank { get; set; }
 

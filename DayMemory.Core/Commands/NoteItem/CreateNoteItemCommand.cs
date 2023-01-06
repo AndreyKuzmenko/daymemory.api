@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace DayMemory.Core.Commands
 {
@@ -15,17 +16,18 @@ namespace DayMemory.Core.Commands
 
     public class CreateNoteItemCommand : IRequest<string>
     {
-        public string? NoteId { get; set; }
+        public required string NoteId { get; set; }
 
-        public string? NotebookId { get; set; }
+        public required string NotebookId { get; set; }
 
-        public string? Text { get; set; }
+        public required string Text { get; set; }
 
-        public string? UserId { get; set; }
+        [JsonIgnore]
+        public required string UserId { get; set; }
 
         public long Date { get; set; }
 
-        public string[]? Files { get; set; }
+        public string[] Files { get; set; } = Array.Empty<string>();
 
         public LocationCommandDto? Location { get; set; }
 

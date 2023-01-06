@@ -21,16 +21,10 @@ namespace DayMemory.Core.CommandHandlers
         protected override async Task Handle(UpdateNotebookCommand request, CancellationToken cancellationToken)
         {
             var item = await _notebookRepository.LoadByIdAsync(request.NotebookId!, cancellationToken);
-            if (item == null)
+            if (item == null || item.UserId != request.UserId)
             {
                 throw new ResourceNotFoundException("Notebook is not found", request.NotebookId!);
             }
-
-            if (item.UserId != request.UserId)
-            {
-
-            }
-
 
             item.Title = request.Title;
             item.OrderRank = request.OrderRank;

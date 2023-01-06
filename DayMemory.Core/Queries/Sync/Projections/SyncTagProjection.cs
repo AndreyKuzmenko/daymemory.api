@@ -5,7 +5,7 @@ namespace DayMemory.Core.Queries.Sync.Projections
 {
     public class SyncTagProjection
     {
-        public string? Id { get; set; }
+        public required string Id { get; set; }
 
         public long ModifiedDate { get; set; }
 

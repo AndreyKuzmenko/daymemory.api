@@ -17,7 +17,7 @@ namespace DayMemory.Core.Commands
         public SortingType SortingType { get; init; }
 
         [JsonIgnore]
-        public string? NotebookId { get; set; }
+        public required string NotebookId { get; set; }
 
         [JsonIgnore]
         public required string UserId { get; set; }

@@ -42,13 +42,12 @@ namespace DayMemory.API.Controllers
         {
             var userId = User.Identity!.Name!;
             command.UserId = userId;
-            
+
             var item = await _mediator.Send(new GetNotebookQuery() { UserId = User.Identity!.Name, NotebookId = command.NotebookId }, ct);
             if (item != null)
             {
                 throw new DuplicateItemException(command.NotebookId!);
             }
-
 
             var itemId = await _mediator.Send(command);
             var query = new GetNotebookQuery { NotebookId = itemId, UserId = userId };
@@ -60,7 +59,11 @@ namespace DayMemory.API.Controllers
         [HttpPut("{notebookId}")]
         public async Task<ActionResult> Put(string notebookId, [FromBody] UpdateNotebookCommand command, CancellationToken ct)
         {
+            var userId = User.Identity!.Name!;
+
             command.NotebookId = notebookId;
+            command.UserId = userId;
+
             await _mediator.Send(command);
             var query = new GetNotebookQuery { NotebookId = notebookId, UserId = User.Identity!.Name };
             var result = await _mediator.Send(query, ct);
@@ -72,6 +75,7 @@ namespace DayMemory.API.Controllers
         {
             var command = new DeleteNotebookCommand
             {
+                UserId = User.Identity!.Name!,
                 NotebookId = notebookId
             };
 

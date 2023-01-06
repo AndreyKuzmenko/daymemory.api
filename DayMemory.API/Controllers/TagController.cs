@@ -25,14 +25,14 @@ namespace DayMemory.API.Controllers
         [HttpGet("{tagId}")]
         public async Task<IActionResult> GetTag(string tagId, CancellationToken ct)
         {
-            var items = await _mediator.Send(new GetTagQuery() { UserId = User.Identity!.Name, TagId = tagId }, ct);
+            var items = await _mediator.Send(new GetTagQuery() { UserId = User.Identity!.Name!, TagId = tagId }, ct);
             return Ok(items);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllTags([FromQuery] GetAllTagsQuery query, CancellationToken ct)
         {
-            query.UserId = User.Identity!.Name;
+            query.UserId = User.Identity!.Name!;
             var items = await _mediator.Send(query, ct);
             return Ok(items);
         }
@@ -43,7 +43,7 @@ namespace DayMemory.API.Controllers
             var userId = User.Identity!.Name!;
             command.UserId = userId;
 
-            var item = await _mediator.Send(new GetTagQuery() { UserId = User.Identity!.Name, TagId = command.TagId }, ct);
+            var item = await _mediator.Send(new GetTagQuery() { UserId = User.Identity!.Name!, TagId = command.TagId }, ct);
             if (item != null)
             {
                 throw new DuplicateItemException(command.TagId!);
@@ -60,8 +60,9 @@ namespace DayMemory.API.Controllers
         public async Task<ActionResult> Put(string tagId, [FromBody] UpdateTagCommand command, CancellationToken ct)
         {
             command.TagId = tagId;
+            command.UserId = User.Identity!.Name!;
             await _mediator.Send(command);
-            var query = new GetTagQuery { TagId = tagId, UserId = User.Identity!.Name };
+            var query = new GetTagQuery { TagId = tagId, UserId = User.Identity!.Name! };
             var result = await _mediator.Send(query, ct);
             return Ok(result);
         }
@@ -71,7 +72,8 @@ namespace DayMemory.API.Controllers
         {
             var command = new DeleteTagCommand
             {
-                TagId = tagId
+                TagId = tagId,
+                UserId = User.Identity!.Name!
             };
 
             await _mediator.Send(command, ct);

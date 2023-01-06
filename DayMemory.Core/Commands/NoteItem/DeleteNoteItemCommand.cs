@@ -1,9 +1,13 @@
 ﻿using MediatR;
+using System.Text.Json.Serialization;
 
 namespace DayMemory.Core.Commands
 {
     public class DeleteNoteItemCommand : IRequest
     {
-        public string? NoteItemId { get; set; }
+        public required string NoteItemId { get; set; }
+
+        [JsonIgnore]
+        public required string UserId { get; set; }
     }
 }

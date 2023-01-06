@@ -20,7 +20,7 @@ namespace DayMemory.Core.CommandHandlers
         protected override async Task Handle(UpdateTagCommand request, CancellationToken cancellationToken)
         {
             var item = await _tagRepository.LoadByIdAsync(request.TagId!, cancellationToken);
-            if (item == null)
+            if (item == null || item.UserId != request.UserId)
             {
                 throw new ResourceNotFoundException("Tag is not found", request.TagId!);
             }
