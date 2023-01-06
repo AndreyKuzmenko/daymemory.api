@@ -4,11 +4,6 @@ using DayMemory.Core.Settings;
 
 namespace DayMemory.Web.Components.Services
 {
-    public interface IFileService
-    {
-        Task<string> UploadFileToCloudStorage(Stream stream, string contentType, string fileId);
-    }
-
     public class AzureFileService : IFileService
     {
         private readonly IConfiguration configuration;
