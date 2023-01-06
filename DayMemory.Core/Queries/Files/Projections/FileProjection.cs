@@ -1,4 +1,6 @@
-﻿namespace DayMemory.Core.Queries.Files.Projections
+﻿using DayMemory.Core.Models.Personal;
+
+namespace DayMemory.Core.Queries.Files.Projections
 {
     public class FileProjection
     {
@@ -9,5 +11,7 @@
         public required string Url { get; set; }
 
         public int FileSize { get; set; }
+
+        public FileType FileType { get; set; }
     }
 }
