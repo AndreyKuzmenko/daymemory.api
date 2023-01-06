@@ -38,6 +38,14 @@ namespace DayMemory.DAL.QueryHandlers.Notes
 
             DateTimeOffset? lastItemDateTime = request.LastItemDateTime.HasValue ? DateTimeOffset.FromUnixTimeMilliseconds(request.LastItemDateTime.Value) : null;
 
+            //var topics1 = await query
+            //            .Where(x => x.UserId == request.UserId)
+            //            .OrderByDescending(d => d.Date)
+            //            .Where(x => !x.IsDeleted)
+            //            .Where(x => lastItemDateTime == null || x.Date < lastItemDateTime)
+            //            .Take(request.Top).ToListAsync();
+
+
             var topics = await query
                 .Where(x => x.UserId == request.UserId)
                 .OrderByDescending(d => d.Date)
@@ -51,14 +59,15 @@ namespace DayMemory.DAL.QueryHandlers.Notes
                      Text = entity.Text,
                      ModifiedDate = entity.ModifiedDate.ToUnixTimeMilliseconds(),
                      Date = entity.Date.ToUnixTimeMilliseconds(),
-                     Files = entity.Files.OrderBy(x => x.OrderRank).ThenBy(x => x.File!.CreatedDate).Select(i => new FileProjection
+                     Images = entity.Files.Where(x => x.File!.FileType == FileType.Image).OrderBy(x => x.OrderRank)
+                     .ThenBy(x => x.File!.CreatedDate).Select(i => new ImageProjection
                      {
                          Id = i.File!.Id,
                          Name = i.File.FileName,
                          Url = string.Format(fileUrlTemplate, i.File.Id),
                          FileSize = i.File.FileSize,
-                         //Width = i.File.Width,
-                         //Height = i.File.Height
+                         Width = (i.File as Image)!.ImageWidth,
+                         Height = (i.File as Image)!.ImageHeight
                      }).ToList(),
                      Location = entity.Location != null ? new LocationProjection()
                      {

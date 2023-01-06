@@ -56,7 +56,7 @@ namespace DayMemory.DAL
 
             var optionsBuilder = new DbContextOptionsBuilder<DayMemoryDbContext>();
             //
-            optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=DayMemory;Integrated Security=true;");
+            optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=DayMemory;Integrated Security=true;Encrypt=False;TrustServerCertificate=False;");
 
 
             return new DayMemoryDbContext(optionsBuilder.Options);

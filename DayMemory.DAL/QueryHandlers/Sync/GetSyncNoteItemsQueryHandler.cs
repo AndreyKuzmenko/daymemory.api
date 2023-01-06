@@ -50,14 +50,15 @@ namespace DayMemory.DAL.QueryHandlers.Notes
                          NotebookId = entity.NotebookId,
                          ModifiedDate = entity.ModifiedDate.ToUnixTimeMilliseconds(),
                          Date = entity.Date.ToUnixTimeMilliseconds(),
-                         Files = entity.Files.OrderBy(x => x.OrderRank).ThenBy(x => x.File!.CreatedDate).Select(i => new FileProjection
+                         Images = entity.Files.Where(x => x.File!.FileType == FileType.Image)
+                         .OrderBy(x => x.OrderRank).ThenBy(x => x.File!.CreatedDate).Select(i => new ImageProjection
                          {
                              Id = i.File!.Id,
                              Name = i.File.FileName,
                              Url = string.Format(fileUrlTemplate, i.File.Id),
                              FileSize = i.File.FileSize,
-                             //Width = i.File.Width,
-                             //Height = i.File.Height
+                             Width = (i.File as Image)!.ImageWidth,
+                             Height = (i.File as Image)!.ImageHeight
                          }).ToList(),
                          Location = entity.Location != null ? new LocationProjection()
                          {
