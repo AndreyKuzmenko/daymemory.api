@@ -30,10 +30,9 @@ namespace DayMemory.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllTags([FromQuery] GetAllTagsQuery query, CancellationToken ct)
+        public async Task<IActionResult> GetAllTags(CancellationToken ct)
         {
-            query.UserId = User.Identity!.Name!;
-            var items = await _mediator.Send(query, ct);
+            var items = await _mediator.Send(new GetAllTagsQuery() { UserId = User.Identity!.Name! }, ct);
             return Ok(items);
         }
 

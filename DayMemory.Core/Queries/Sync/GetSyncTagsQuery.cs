@@ -9,7 +9,7 @@ namespace DayMemory.Core.Queries
     public class GetSyncTagsQuery : IRequest<SyncListProjection<SyncTagProjection>>
     {
         [JsonIgnore]
-        public required string UserId { get; set; }
+        public string? UserId { get; set; }
 
         public long? LastSyncDateTime { get; set; }
     }

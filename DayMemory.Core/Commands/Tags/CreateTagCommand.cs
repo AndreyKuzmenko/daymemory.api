@@ -12,7 +12,7 @@ namespace DayMemory.Core.Commands
         public required string Text { get; set; }
 
         [JsonIgnore]
-        public required string UserId { get; set; }
+        public string? UserId { get; set; }
 
         public int OrderRank { get; set; }
     }

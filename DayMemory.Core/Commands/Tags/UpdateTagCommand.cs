@@ -7,12 +7,12 @@ namespace DayMemory.Core.Commands
 {
     public class UpdateTagCommand : IRequest
     {
-        public required string TagId { get; set; }
+        public string? TagId { get; set; }
 
         public required string Text { get; set; }
 
         [JsonIgnore]
-        public required string UserId { get; set; }
+        public string? UserId { get; set; }
 
         public int OrderRank { get; set; }
     }

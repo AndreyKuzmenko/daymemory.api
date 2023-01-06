@@ -9,7 +9,7 @@ namespace DayMemory.Core.Queries
     public class GetSyncNotebooksQuery : IRequest<SyncListProjection<SyncNotebookProjection>>
     {
         [JsonIgnore]
-        public required string UserId { get; set; }
+        public string? UserId { get; set; }
 
         public long? LastSyncDateTime { get; set; }
     }

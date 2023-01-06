@@ -7,7 +7,7 @@ namespace DayMemory.Core.Commands
 {
     public class UpdateNoteItemCommand : IRequest
     {
-        public required string NoteId { get; set; }
+        public string? NoteId { get; set; }
 
         public required string NotebookId { get; set; }
 
@@ -18,7 +18,7 @@ namespace DayMemory.Core.Commands
         public long Date { get; set; }
 
         [JsonIgnore]
-        public required string UserId { get; set; }
+        public string? UserId { get; set; }
 
         public LocationCommandDto? Location { get; set; }
     }
