@@ -1,4 +1,5 @@
-﻿using DayMemory.Core.Queries.Tags.Projections;
+﻿using DayMemory.Core.Queries.Files.Projections;
+using DayMemory.Core.Queries.Tags.Projections;
 
 namespace DayMemory.Core.Queries.Projections
 {

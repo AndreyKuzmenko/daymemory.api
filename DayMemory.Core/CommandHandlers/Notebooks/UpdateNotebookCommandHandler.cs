@@ -25,6 +25,13 @@ namespace DayMemory.Core.CommandHandlers
             {
                 throw new ResourceNotFoundException("Notebook is not found", request.NotebookId!);
             }
+
+            if (item.UserId != request.UserId)
+            {
+
+            }
+
+
             item.Title = request.Title;
             item.OrderRank = request.OrderRank;
             item.ShowInReview = request.ShowInReview;

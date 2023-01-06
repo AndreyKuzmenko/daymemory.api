@@ -8,7 +8,6 @@ using DayMemory.DAL;
 using DayMemory.DAL.Repositories;
 using DayMemory.Web.Components.Auth;
 using DayMemory.Web.Components.Extensions;
-using DayMemory.Web.Components.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

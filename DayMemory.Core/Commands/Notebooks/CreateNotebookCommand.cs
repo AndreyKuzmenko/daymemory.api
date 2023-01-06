@@ -2,6 +2,7 @@
 using MediatR;
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace DayMemory.Core.Commands
 {
@@ -11,6 +12,7 @@ namespace DayMemory.Core.Commands
 
         public string? Title { get; set; }
 
+        [JsonIgnore]
         public string? UserId { get; set; }
 
         public bool ShowInReview { get; set; }

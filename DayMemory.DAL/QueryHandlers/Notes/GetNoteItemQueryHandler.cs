@@ -6,6 +6,7 @@ using DayMemory.Core.Services;
 using DayMemory.DAL;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using DayMemory.Core.Queries.Files.Projections;
 
 namespace DayMemory.DAL.QueryHandlers.Notes
 {
@@ -46,8 +47,8 @@ namespace DayMemory.DAL.QueryHandlers.Notes
                          Name = i.File.FileName,
                          Url = string.Format(fileUrlTemplate, i.File.Id),
                          FileSize = i.File.FileSize,
-                         Width = i.File.Width,
-                         Height = i.File.Height
+                         //Width = i.File.Width,
+                         //Height = i.File.Height
                      }).ToList(),
                      Location = entity.Location != null ? new LocationProjection()
                      {

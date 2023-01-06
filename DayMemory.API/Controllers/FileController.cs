@@ -1,8 +1,11 @@
-﻿using DayMemory.Core.Interfaces.Repositories;
+﻿using DayMemory.Core.Commands.Files;
+using DayMemory.Core.Interfaces.Repositories;
 using DayMemory.Core.Models;
 using DayMemory.Core.Models.Personal;
+using DayMemory.Core.Queries;
 using DayMemory.Core.Services;
-using DayMemory.Web.Components.Services;
+//using DayMemory.Web.Components.Services;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SkiaSharp;
@@ -17,17 +20,19 @@ namespace DayMemory.API.Controllers
         private readonly IFileService _fileService;
 
         private readonly IUrlResolver _urlResolver;
+        private readonly IMediator _mediator;
 
-        public FileController(IFileRepository fileRepository, IFileService fileService, IUrlResolver urlResolver)
+        public FileController(IFileRepository fileRepository, IFileService fileService, IUrlResolver urlResolver, IMediator mediator)
         {
             _fileRepository = fileRepository;
             _fileService = fileService;
-            this._urlResolver = urlResolver;
+            _urlResolver = urlResolver;
+            _mediator = mediator;
         }
 
         [Route("api/files/{fileId}")]
         [HttpHead]
-        public async Task<ActionResult<FileDto>> CheckIfFileExists([FromRoute] string fileId)
+        public async Task<ActionResult> CheckIfFileExists([FromRoute] string fileId)
         {
             var fileExists = await _fileRepository.ExistsAsync(fileId);
             if (!fileExists)
@@ -37,61 +42,47 @@ namespace DayMemory.API.Controllers
         }
 
         [HttpPost]
-        [Route("api/files/{fileId}")]
-        public async Task<ActionResult<FileDto>> Upload([FromRoute] string fileId, [FromForm] IFormFile file)
+        [Route("api/files/image/{fileId}")]
+        public async Task<ActionResult> UploadImage([FromRoute] string fileId, [FromForm] IFormFile? file, CancellationToken ct)
         {
-            var userId = User.Identity!.Name!;
-            //TODO: Change to COMMAND
             if (file == null)
             {
                 return BadRequest();
             }
-
-            //TODO: Inconsistency with other APIs. Should throw exception if file exists
-            var fileItem = await _fileRepository.LoadByIdAsync(fileId);
-            if (fileItem != null)
+            var userId = User.Identity!.Name!;
+            var command = new CreateFileCommand()
             {
-                return new FileDto
-                {
-                    Id = fileId,
-                    Name = file.FileName,
-                    Url = _urlResolver.GetFileUrlTemplate( userId),
-                    Height = fileItem.Height,
-                    Width = fileItem.Width
-                };
-            }
+                FormFile = file,
+                FileId = fileId,
+                FileType = FileType.Image,
+                UserId = userId
+            };
 
-            var fileUrl = await _fileService.UploadFileToCloudStorage(file.OpenReadStream(), file.ContentType, $"{userId}/{fileId}");
+            var id = await _mediator.Send(command, ct);
+            var query = new GetFileQuery { FileId = id, UserId = User.Identity!.Name };
+            var result = await _mediator.Send(query, ct);
 
-            using (var skImage = SKImage.FromEncodedData(file.OpenReadStream()))
-            {
-                await SaveFile(file.FileName, file.ContentType, (int)file.Length, skImage.Width, skImage.Height, fileId, userId);
-
-                return new FileDto
-                {
-                    Id = fileId,
-                    Name = file.FileName,
-                    Url = fileUrl,
-                    Height = skImage.Height,
-                    Width = skImage.Width
-                };
-            }
+            return Ok(result);
         }
 
-        private async Task SaveFile(string fileName, string contentType, int size, int width, int height, string newId, string userId)
+        [HttpPost]
+        [Route("api/files/video/{fileId}")]
+        public async Task<ActionResult> UploadVideo([FromRoute] string fileId, [FromForm] IFormFile file, CancellationToken ct)
         {
-            await _fileRepository.CreateAsync(new Core.Models.Personal.File
+            var userId = User.Identity!.Name!;
+            var command = new CreateFileCommand()
             {
-                Id = newId,
-                FileName = fileName,
-                FileSize = size,
-                Width = width,
-                Height = height,
-                UserId = userId,
-                FileContentType = contentType,
-                CreatedDate = DateTimeOffset.UtcNow,
-                ModifiedDate = DateTimeOffset.UtcNow,
-            });
+                FormFile = file,
+                FileId = fileId,
+                FileType = FileType.Video,
+                UserId = userId
+            };
+
+            var id = await _mediator.Send(command, ct);
+            var query = new GetFileQuery { FileId = id, UserId = User.Identity!.Name };
+            var result = await _mediator.Send(query, ct);
+
+            return Ok(result);
         }
     }
 }
