@@ -7,7 +7,7 @@ namespace DayMemory.Web.Components.Extensions
 {
     public static class ProblemDetailsOptionsExtensions
     {
-        public static void MapFluentValidationException(this ProblemDetailsOptions options)
+        public static void MapFluentValidationException(this Hellang.Middleware.ProblemDetails.ProblemDetailsOptions options)
         {
             options.Map<ValidationException>((ctx, ex) =>
             {

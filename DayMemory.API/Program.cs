@@ -254,7 +254,7 @@ app.Run();
 
 
 
-void ConfigureProblemDetails(ProblemDetailsOptions options)
+void ConfigureProblemDetails(Hellang.Middleware.ProblemDetails.ProblemDetailsOptions options)
 {
     // Custom mapping function for FluentValidation's ValidationException.
     options.MapFluentValidationException();
