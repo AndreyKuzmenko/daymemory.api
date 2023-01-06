@@ -7,18 +7,19 @@ using System.Text.Json.Serialization;
 namespace DayMemory.Core.Commands
 {
     public class UpdateNotebookCommand : IRequest, IResourceRequestor
-    {
+    {       
+        public required string Title { get; init; }
+
+        public int OrderRank { get; init; }
+
+        public bool ShowInReview { get; init; }
+
+        public SortingType SortingType { get; init; }
+
         [JsonIgnore]
         public string? NotebookId { get; set; }
 
-        public required string Title { get; set; }
-
-        public int OrderRank { get; set; }
-
-        public bool ShowInReview { get; set; }
-
-        public SortingType SortingType { get; set; }
-
+        [JsonIgnore]
         public required string UserId { get; set; }
     }
 }
