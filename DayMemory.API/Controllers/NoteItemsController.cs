@@ -27,14 +27,14 @@ namespace DayMemory.API.Controllers
         [HttpGet("{noteItemId}")]
         public async Task<IActionResult> GetNoteItem(string noteItemId, CancellationToken ct)
         {
-            var item = await _mediator.Send(new GetNoteItemQuery() { UserId = User.Identity!.Name, NoteItemId = noteItemId }, ct);
+            var item = await _mediator.Send(new GetNoteItemQuery() { UserId = User.Identity!.Name!, NoteItemId = noteItemId }, ct);
             return Ok(item);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllNotes([FromQuery] GetAllNoteItemsQuery query, CancellationToken ct)
         {
-            query.UserId = User.Identity!.Name;
+            query.UserId = User.Identity!.Name!;
             var items = await _mediator.Send(query, ct);
             return Ok(items);
         }
@@ -45,7 +45,7 @@ namespace DayMemory.API.Controllers
             var userId = User.Identity!.Name!;
             command.UserId = userId;
 
-            var item = await _mediator.Send(new GetNoteItemQuery() { UserId = User.Identity!.Name, NoteItemId = command.NoteId }, ct);
+            var item = await _mediator.Send(new GetNoteItemQuery() { UserId = User.Identity!.Name!, NoteItemId = command.NoteId }, ct);
             if (item != null)
             {
                 throw new DuplicateItemException(command.NoteId!);
@@ -63,7 +63,7 @@ namespace DayMemory.API.Controllers
             command.NoteId = noteId;
             command.UserId = User.Identity!.Name!;
             await _mediator.Send(command);
-            var query = new GetNoteItemQuery { NoteItemId = noteId, UserId = User.Identity!.Name };
+            var query = new GetNoteItemQuery { NoteItemId = noteId, UserId = User.Identity!.Name! };
             var result = await _mediator.Send(query, ct);
             return Ok(result);
         }

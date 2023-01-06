@@ -22,6 +22,7 @@ using System.Text.Json;
 using DayMemory.Core;
 using Microsoft.Extensions.Logging;
 using DayMemory.API.Components;
+using Microsoft.AspNetCore.DataProtection;
 
 string CorsPolicyName = "DayMemoryCorsPolicy";
 
@@ -120,6 +121,10 @@ builder.Services.Configure<IdentityOptions>(options =>
 });
 
 var tokenKey = builder.Configuration.GetValue<string>("Secret");
+if (tokenKey == null)
+{
+    throw new ConfigurationException("Secret");
+}
 var key = Encoding.ASCII.GetBytes(tokenKey);
 
 builder.Services.AddAuthentication(x =>
@@ -234,9 +239,9 @@ app.MapGet("/conf", async context =>
         return;
     }
 
-    IConfiguration? allConfig = context.RequestServices.GetRequiredService<IConfiguration>();
+    IConfiguration allConfig = context.RequestServices.GetRequiredService<IConfiguration>();
 
-    IEnumerable<KeyValuePair<string, string>> configKv = allConfig.AsEnumerable();
+    IEnumerable<KeyValuePair<string, string>> configKv = allConfig == null ? Array.Empty<KeyValuePair<string, string>>() : allConfig.AsEnumerable();
 
     var jsonSerializerOptions = new JsonSerializerOptions { WriteIndented = true };
     await context.Response.WriteAsJsonAsync(configKv, jsonSerializerOptions);

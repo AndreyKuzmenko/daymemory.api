@@ -30,7 +30,7 @@ namespace DayMemory.API.Controllers
         [HttpGet("{questionListId}")]
         public async Task<IActionResult> Get(string questionListId, CancellationToken ct)
         {
-            var items = await _mediator.Send(new GetQuestionListQuery() { UserId = User.Identity!.Name, QuestionListId = questionListId }, ct);
+            var items = await _mediator.Send(new GetQuestionListQuery() { UserId = User.Identity!.Name!, QuestionListId = questionListId }, ct);
             return Ok(items);
         }
 

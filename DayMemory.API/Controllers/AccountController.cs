@@ -56,7 +56,7 @@ namespace DayMemory.Web.Areas.Mobile
                 return BadRequest("Password confirmation does not match with the Password");
             }
 
-            var userId = User.Identity!.Name;
+            var userId = User.Identity!.Name!;
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {

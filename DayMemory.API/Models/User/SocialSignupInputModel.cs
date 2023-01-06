@@ -6,9 +6,9 @@ namespace DayMemory.Web.Api.Models
     public class SocialSignupInputModel
     {
         [Required(ErrorMessage = "Id is required."), MaxLength(128)]
-        public string? Id { get; set; }
+        public required string Id { get; set; }
         
-        public string? Email { get; set; }
+        public required string Email { get; set; }
 
         public string? FirstName { get; set; }
 
@@ -16,6 +16,6 @@ namespace DayMemory.Web.Api.Models
 
         public string? ImageUrl { get; set; }
 
-        public string? ProviderType { get; set; }
+        public required string ProviderType { get; set; }
     }
 }

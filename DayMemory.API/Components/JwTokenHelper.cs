@@ -1,4 +1,5 @@
 ﻿using DayMemory.Core.Models.Common;
+using DayMemory.Core.Models.Exceptions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -55,10 +56,15 @@ namespace DayMemory.Web.Components.Auth
             }
 
             claims.Add(new Claim(ClaimTypes.Name, user.Id));
-            claims.Add(new Claim(ClaimTypes.Email, user.Email));
+            claims.Add(new Claim(ClaimTypes.Email, user.Email!));
 
+            var secret = _configuration.GetValue<string>("Secret");
+            if (secret == null)
+            {
+                throw new ConfigurationException("Secret");
+            }
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("Secret"));
+            var key = Encoding.ASCII.GetBytes(secret);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),

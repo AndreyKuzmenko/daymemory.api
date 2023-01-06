@@ -25,14 +25,14 @@ namespace DayMemory.API.Controllers
         [HttpGet("{notebookId}")]
         public async Task<IActionResult> GetNotebook(string notebookId, CancellationToken ct)
         {
-            var items = await _mediator.Send(new GetNotebookQuery() { UserId = User.Identity!.Name, NotebookId = notebookId }, ct);
+            var items = await _mediator.Send(new GetNotebookQuery() { UserId = User.Identity!.Name!, NotebookId = notebookId }, ct);
             return Ok(items);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllNotebooks([FromQuery] GetAllNotebooksQuery query, CancellationToken ct)
         {
-            query.UserId = User.Identity!.Name;
+            query.UserId = User.Identity!.Name!;
             var items = await _mediator.Send(query, ct);
             return Ok(items);
         }
@@ -43,7 +43,7 @@ namespace DayMemory.API.Controllers
             var userId = User.Identity!.Name!;
             command.UserId = userId;
 
-            var item = await _mediator.Send(new GetNotebookQuery() { UserId = User.Identity!.Name, NotebookId = command.NotebookId }, ct);
+            var item = await _mediator.Send(new GetNotebookQuery() { UserId = User.Identity!.Name!, NotebookId = command.NotebookId }, ct);
             if (item != null)
             {
                 throw new DuplicateItemException(command.NotebookId!);
@@ -65,7 +65,7 @@ namespace DayMemory.API.Controllers
             command.UserId = userId;
 
             await _mediator.Send(command);
-            var query = new GetNotebookQuery { NotebookId = notebookId, UserId = User.Identity!.Name };
+            var query = new GetNotebookQuery { NotebookId = notebookId, UserId = User.Identity!.Name! };
             var result = await _mediator.Send(query, ct);
             return Ok(result);
         }

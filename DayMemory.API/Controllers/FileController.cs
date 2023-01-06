@@ -59,7 +59,7 @@ namespace DayMemory.API.Controllers
             };
 
             var id = await _mediator.Send(command, ct);
-            var query = new GetFileQuery { FileId = id, UserId = User.Identity!.Name };
+            var query = new GetFileQuery { FileId = id, UserId = User.Identity!.Name! };
             var result = await _mediator.Send(query, ct);
 
             return Ok(result);
@@ -79,7 +79,7 @@ namespace DayMemory.API.Controllers
             };
 
             var id = await _mediator.Send(command, ct);
-            var query = new GetFileQuery { FileId = id, UserId = User.Identity!.Name };
+            var query = new GetFileQuery { FileId = id, UserId = User.Identity!.Name! };
             var result = await _mediator.Send(query, ct);
 
             return Ok(result);
