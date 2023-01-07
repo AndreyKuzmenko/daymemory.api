@@ -38,6 +38,7 @@ namespace DayMemory.DAL.QueryHandlers.Files
                 Id = file.Id,
                 FileSize = file.FileSize,
                 Url = string.Format(fileUrlTemplate, file.Id),
+                FileType = file.FileType,
                 Name = file.FileName,
                 Width = file.Width,
                 Height = file.Height
