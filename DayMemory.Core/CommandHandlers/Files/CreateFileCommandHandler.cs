@@ -12,7 +12,7 @@ using SkiaSharp;
 using System.Drawing;
 using System.Net.Mime;
 using static System.Net.Mime.MediaTypeNames;
-using Image = DayMemory.Core.Models.Personal.Image;
+using File = DayMemory.Core.Models.Personal.File;
 
 namespace DayMemory.Core.CommandHandlers.Files
 {
@@ -39,44 +39,19 @@ namespace DayMemory.Core.CommandHandlers.Files
             using (var stream = request.FormFile!.OpenReadStream())
             {
                 var fileUrl = await _fileService.UploadFileToCloudStorage(stream, request.FormFile.ContentType, $"{request.UserId}/{request.FileId}");
-                stream.Position = 0;
-                if (request.FileType == FileType.Image)
+                await _fileRepository.CreateAsync(new File
                 {
-                    using (var skImage = SKImage.FromEncodedData(stream))
-                    {
-                        await _fileRepository.CreateAsync(new Image
-                        {
-                            Id = request.FileId!,
-                            FileType = FileType.Image,
-                            FileName = request.FormFile!.FileName,
-                            FileSize = (int)request.FormFile!.Length,
-                            ImageWidth = skImage.Width,
-                            ImageHeight = skImage.Height,
-                            UserId = "6ed54cf5-d768-4239-ab18-b73f04bc56a2",
-                            FileContentType = request.FormFile.ContentType,
-                            CreatedDate = _clock.UtcNow,
-                            ModifiedDate = _clock.UtcNow,
-                        });
-                    }
-                }
-                else if (request.FileType == FileType.Video)
-                {
-                    await _fileRepository.CreateAsync(new Models.Personal.File
-                    {
-                        Id = request.FileId!,
-                        FileType = FileType.Video,
-                        FileName = request.FormFile!.FileName,
-                        FileSize = (int)request.FormFile!.Length,
-                        UserId = request.UserId, //"6ed54cf5-d768-4239-ab18-b73f04bc56a2",
-                        FileContentType = request.FormFile.ContentType,
-                        CreatedDate = _clock.UtcNow,
-                        ModifiedDate = _clock.UtcNow,
-                    });
-                }
-                else
-                {
-                    throw new InvalidOperationException("Unknown file type");
-                }
+                    Id = request.FileId!,
+                    FileType = request.FileType,
+                    FileName = request.FormFile!.FileName,
+                    FileSize = (int)request.FormFile!.Length,
+                    Width = request.Width,
+                    Height = request.Height,
+                    UserId = request.UserId,
+                    FileContentType = request.FormFile.ContentType,
+                    CreatedDate = _clock.UtcNow,
+                    ModifiedDate = _clock.UtcNow,
+                });
             }
 
             return request.FileId!;

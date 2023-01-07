@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using DayMemory.Core.Queries.Files.Projections;
 using File = DayMemory.Core.Models.Personal.File;
 using DayMemory.Core.Services;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace DayMemory.DAL.QueryHandlers.Files
 {
@@ -25,45 +26,22 @@ namespace DayMemory.DAL.QueryHandlers.Files
         public async Task<FileProjection?> Handle(GetFileQuery request, CancellationToken cancellationToken)
         {
             var query = _readDbContext!.GetQuery<File>().AsNoTracking();
-            var file = await query.FirstOrDefaultAsync(x => x.Id == request.FileId!, cancellationToken);
+            var file = await query.FirstOrDefaultAsync(x => x.Id == request.FileId! && x.UserId == request.UserId, cancellationToken);
             if (file == null)
             {
                 return null;
             }
 
             var fileUrlTemplate = _urlResolver.GetFileUrlTemplate(request.UserId!);
-
-            if (file.FileType == FileType.Image)
+            return new FileProjection()
             {
-                var image = file as Image;
-                if (image == null)
-                {
-                    throw new InvalidOperationException("Image is saved incorrectly");
-                }
-                return new ImageProjection()
-                {
-                    Id = image.Id,
-                    FileSize = image.FileSize,
-                    Url = string.Format(fileUrlTemplate, file.Id),
-                    Name = image.FileName,
-                    Width = image.ImageWidth,
-                    Height = image.ImageHeight
-                };
-            }
-            else if (file.FileType == FileType.Video)
-            {
-                return new FileProjection()
-                {
-                    Id = file.Id,
-                    FileSize = file.FileSize,
-                    Url = string.Format(fileUrlTemplate, file.Id),
-                    Name = file.FileName
-                };
-            }
-            else
-            {
-                throw new InvalidOperationException("Unknown file type");
-            }
+                Id = file.Id,
+                FileSize = file.FileSize,
+                Url = string.Format(fileUrlTemplate, file.Id),
+                Name = file.FileName,
+                Width = file.Width,
+                Height = file.Height
+            };
         }
     }
 }

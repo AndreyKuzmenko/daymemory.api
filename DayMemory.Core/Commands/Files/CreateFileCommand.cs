@@ -15,5 +15,9 @@ namespace DayMemory.Core.Commands.Files
         public string? FileId { get; set; }
 
         public FileType FileType { get; set; }
+        
+        public int Height { get; set; }
+
+        public int Width { get; set; }
     }
 }

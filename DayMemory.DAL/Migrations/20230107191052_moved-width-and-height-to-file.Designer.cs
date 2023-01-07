@@ -4,6 +4,7 @@ using DayMemory.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DayMemory.DAL.Migrations
 {
     [DbContext(typeof(DayMemoryDbContext))]
-    partial class DayMemoryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230107191052_moved-width-and-height-to-file")]
+    partial class movedwidthandheighttofile
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,6 +66,8 @@ namespace DayMemory.DAL.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("FileItem", (string)null);
+
+                    b.UseTptMappingStrategy();
                 });
 
             modelBuilder.Entity("DayMemory.Core.Models.Personal.Location", b =>
@@ -504,6 +509,19 @@ namespace DayMemory.DAL.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("DayMemory.Core.Models.Personal.Image", b =>
+                {
+                    b.HasBaseType("DayMemory.Core.Models.Personal.File");
+
+                    b.Property<int>("ImageHeight")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ImageWidth")
+                        .HasColumnType("int");
+
+                    b.ToTable("Image", (string)null);
+                });
+
             modelBuilder.Entity("DayMemory.Core.Models.Common.User", b =>
                 {
                     b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
@@ -663,6 +681,15 @@ namespace DayMemory.DAL.Migrations
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DayMemory.Core.Models.Personal.Image", b =>
+                {
+                    b.HasOne("DayMemory.Core.Models.Personal.File", null)
+                        .WithOne()
+                        .HasForeignKey("DayMemory.Core.Models.Personal.Image", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

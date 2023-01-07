@@ -42,8 +42,8 @@ namespace DayMemory.API.Controllers
         }
 
         [HttpPost]
-        [Route("api/files/image/{fileId}")]
-        public async Task<ActionResult> UploadImage([FromRoute] string fileId, [FromForm] IFormFile? file, CancellationToken ct)
+        [Route("api/files/media/{fileId}")]
+        public async Task<ActionResult> UploadMedia([FromRoute] string fileId, [FromForm] int width, [FromForm] int height, [FromForm] FileType fileType, [FromForm] IFormFile? file, CancellationToken ct)
         {
             if (file == null)
             {
@@ -54,27 +54,9 @@ namespace DayMemory.API.Controllers
             {
                 FormFile = file,
                 FileId = fileId,
-                FileType = FileType.Image,
-                UserId = userId
-            };
-
-            var id = await _mediator.Send(command, ct);
-            var query = new GetFileQuery { FileId = id, UserId = User.Identity!.Name! };
-            var result = await _mediator.Send(query, ct);
-
-            return Ok(result);
-        }
-
-        [HttpPost]
-        [Route("api/files/video/{fileId}")]
-        public async Task<ActionResult> UploadVideo([FromRoute] string fileId, [FromForm] IFormFile file, CancellationToken ct)
-        {
-            var userId = User.Identity!.Name!;
-            var command = new CreateFileCommand()
-            {
-                FormFile = file,
-                FileId = fileId,
-                FileType = FileType.Video,
+                FileType = fileType,
+                Width = width,
+                Height = height,
                 UserId = userId
             };
 

@@ -24,5 +24,9 @@ namespace DayMemory.Core.Models.Personal
         public string? UserId { get; set; }
 
         public FileType FileType { get; set; }
+
+        public int Height { get; set; }
+
+        public int Width { get; set; }
     }
 }
