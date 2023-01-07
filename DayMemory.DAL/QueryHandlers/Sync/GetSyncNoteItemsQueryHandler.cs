@@ -50,7 +50,7 @@ namespace DayMemory.DAL.QueryHandlers.Notes
                          NotebookId = entity.NotebookId,
                          ModifiedDate = entity.ModifiedDate.ToUnixTimeMilliseconds(),
                          Date = entity.Date.ToUnixTimeMilliseconds(),
-                         Images = entity.Files.OrderBy(x => x.OrderRank).ThenBy(x => x.File!.CreatedDate).Select(i => new FileProjection
+                         MediaFiles = entity.Files.OrderBy(x => x.OrderRank).ThenBy(x => x.File!.CreatedDate).Select(i => new FileProjection
                          {
                              Id = i.File!.Id,
                              Name = i.File.FileName,

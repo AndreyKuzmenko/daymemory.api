@@ -15,7 +15,7 @@ namespace DayMemory.Core.Queries.Projections
 
         public required long ModifiedDate { get; set; }
 
-        public List<FileProjection>? Images { get; set; }
+        public List<FileProjection>? MediaFiles { get; set; }
 
         public virtual LocationProjection? Location { get; set; }
     }

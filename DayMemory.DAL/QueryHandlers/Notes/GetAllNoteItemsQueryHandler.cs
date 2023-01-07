@@ -59,7 +59,7 @@ namespace DayMemory.DAL.QueryHandlers.Notes
                      Text = entity.Text,
                      ModifiedDate = entity.ModifiedDate.ToUnixTimeMilliseconds(),
                      Date = entity.Date.ToUnixTimeMilliseconds(),
-                     Images = entity.Files.Where(x => x.File!.FileType == FileType.Image).OrderBy(x => x.OrderRank)
+                     MediaFiles = entity.Files.Where(x => x.File!.FileType == FileType.Image).OrderBy(x => x.OrderRank)
                      .ThenBy(x => x.File!.CreatedDate).Select(i => new FileProjection
                      {
                          Id = i.File!.Id,
