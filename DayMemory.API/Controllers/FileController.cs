@@ -49,6 +49,12 @@ namespace DayMemory.API.Controllers
             {
                 return BadRequest();
             }
+
+            if (fileType == FileType.Unknown)
+            {
+                return BadRequest("File type is unknown.");
+            }
+
             var userId = User.Identity!.Name!;
             var command = new CreateMediaFileCommand()
             {
