@@ -50,7 +50,7 @@ namespace DayMemory.API.Controllers
                 return BadRequest();
             }
             var userId = User.Identity!.Name!;
-            var command = new CreateFileCommand()
+            var command = new CreateMediaFileCommand()
             {
                 FormFile = file,
                 FileId = fileId,

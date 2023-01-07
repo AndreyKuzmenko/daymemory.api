@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace DayMemory.Core.Commands.Files
 {
-    public class CreateFileCommand : IRequest<string>
+    public class CreateMediaFileCommand : IRequest<string>
     {
         public IFormFile? FormFile { get; set; }
         

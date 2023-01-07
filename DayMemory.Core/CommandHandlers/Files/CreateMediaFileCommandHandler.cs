@@ -16,20 +16,20 @@ using File = DayMemory.Core.Models.Personal.File;
 
 namespace DayMemory.Core.CommandHandlers.Files
 {
-    internal class CreateFileCommandHandler : IRequestHandler<CreateFileCommand, string>
+    internal class CreateMediaFileCommandHandler : IRequestHandler<CreateMediaFileCommand, string>
     {
         private readonly IFileRepository _fileRepository;
         private readonly IFileService _fileService;
         private readonly ISystemClock _clock;
 
-        public CreateFileCommandHandler(IFileRepository fileRepository, IFileService fileService, ISystemClock clock)
+        public CreateMediaFileCommandHandler(IFileRepository fileRepository, IFileService fileService, ISystemClock clock)
         {
             _fileRepository = fileRepository;
             _fileService = fileService;
             _clock = clock;
         }
 
-        public async Task<string> Handle(CreateFileCommand request, CancellationToken cancellationToken)
+        public async Task<string> Handle(CreateMediaFileCommand request, CancellationToken cancellationToken)
         {
             var fileItem = await _fileRepository.LoadByIdAsync(request.FileId!);
             if (fileItem != null)
