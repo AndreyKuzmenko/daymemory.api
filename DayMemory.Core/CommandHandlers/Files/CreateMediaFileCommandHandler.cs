@@ -39,7 +39,7 @@ namespace DayMemory.Core.CommandHandlers.Files
                 return request.FileId!;
             }
 
-            string tempPath = Path.GetTempPath();
+            string tempPath = "\\wwwroot";
             var exeFolder = Path.Combine(tempPath, "ffmpeg");
             var inputFileFolder = Path.Combine(tempPath, "ffmpeg", request.FileId!);
             var outputFileFolder = Path.Combine(tempPath, "ffmpeg", request.FileId!);
