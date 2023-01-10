@@ -91,7 +91,8 @@ namespace DayMemory.Core.CommandHandlers.Files
                 {
                     Id = request.FileId!,
                     FileType = request.FileType,
-                    FileName = Path.GetFileNameWithoutExtension(request.FormFile.FileName) + ".mp4",
+                    FileName = request.FormFile.FileName,
+                    //FileName = Path.GetFileNameWithoutExtension(request.FormFile.FileName) + ".mp4",
                     FileSize = (int)request.FormFile.Length,
                     Width = request.Width,
                     Height = request.Height,
