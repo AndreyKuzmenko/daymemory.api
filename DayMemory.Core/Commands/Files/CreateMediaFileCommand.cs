@@ -8,7 +8,7 @@ namespace DayMemory.Core.Commands.Files
 {
     public class CreateMediaFileCommand : IRequest<string>
     {
-        public IFormFile? FormFile { get; set; }
+        public required IFormFile FormFile { get; set; }
         
         public string? UserId { get; set; }
 

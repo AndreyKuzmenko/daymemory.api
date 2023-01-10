@@ -59,7 +59,7 @@ namespace DayMemory.Core.CommandHandlers.Files
 
 
 
-            using (var stream = request.FormFile!.OpenReadStream())
+            using (var stream = request.FormFile.OpenReadStream())
             {
 
                 //var filePath = Path.Combine(inputFileFolder, request.FormFile.FileName);
@@ -91,8 +91,8 @@ namespace DayMemory.Core.CommandHandlers.Files
                 {
                     Id = request.FileId!,
                     FileType = request.FileType,
-                    FileName = Path.GetFileNameWithoutExtension(request.FormFile!.FileName) + ".mp4",
-                    FileSize = (int)request.FormFile!.Length,
+                    FileName = Path.GetFileNameWithoutExtension(request.FormFile.FileName) + ".mp4",
+                    FileSize = (int)request.FormFile.Length,
                     Width = request.Width,
                     Height = request.Height,
                     UserId = request.UserId,
