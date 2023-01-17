@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using DayMemory.Core.Queries.Files.Projections;
 using File = DayMemory.Core.Models.Personal.File;
 using DayMemory.Core.Services;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace DayMemory.DAL.QueryHandlers.Files
 {

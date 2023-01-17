@@ -12,6 +12,8 @@ namespace DayMemory.Core.Queries.Notebooks.Projections
 
         public bool ShowInReview { get; set; }
 
+        public bool IsEncrypted { get; set; }
+
         public long? ModifiedDate { get; set; }
 
         public SortingType SortingType { get; set; }

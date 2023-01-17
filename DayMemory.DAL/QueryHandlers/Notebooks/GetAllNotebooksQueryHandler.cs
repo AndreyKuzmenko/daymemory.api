@@ -29,6 +29,7 @@ namespace DayMemory.DAL.QueryHandlers.Tags
                         Title = t.Title,
                         OrderRank = t.OrderRank,
                         ModifiedDate = t.ModifiedDate.ToUnixTimeMilliseconds(),
+                        IsEncrypted = t.IsEncrypted,
                         SortingType = t.SortingType,
                         ShowInReview = t.ShowInReview,
                     })

@@ -19,6 +19,8 @@ namespace DayMemory.Core.Commands
 
         public int OrderRank { get; set; }
 
+        public bool IsEncrypted { get; set; }
+
         public SortingType SortingType { get; set; }
     }
 }

@@ -27,6 +27,8 @@ namespace DayMemory.Core.Commands
 
         public long Date { get; set; }
 
+        public bool IsEncrypted { get; set; }
+
         public string[] MediaFiles { get; set; } = Array.Empty<string>();
 
         public LocationCommandDto? Location { get; set; }

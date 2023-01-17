@@ -46,6 +46,7 @@ namespace DayMemory.Core.CommandHandlers
                 LocationId = locationId,
                 Text = request.Text ?? "",
                 Date = DateTimeOffset.FromUnixTimeMilliseconds(request.Date),
+                IsEncrypted = request.IsEncrypted,
                 CreatedDate = _clock.UtcNow,
                 ModifiedDate = _clock.UtcNow,
             };

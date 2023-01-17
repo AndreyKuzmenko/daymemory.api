@@ -38,6 +38,7 @@ namespace DayMemory.DAL.QueryHandlers.Notes
                          Id = entity.Id,
                          Title = entity.Title,
                          OrderRank = entity.OrderRank,
+                         IsEncrypted = entity.IsEncrypted,
                          ShowInReview = entity.ShowInReview,
                          SortingType = entity.SortingType,
                          ModifiedDate = entity.ModifiedDate.ToUnixTimeMilliseconds(),

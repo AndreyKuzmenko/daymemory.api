@@ -17,6 +17,8 @@ namespace DayMemory.Core.Commands
 
         public long Date { get; set; }
 
+        public bool IsEncrypted { get; set; }
+
         [JsonIgnore]
         public string? UserId { get; set; }
 

@@ -31,6 +31,7 @@ namespace DayMemory.Core.CommandHandlers
             item.ShowInReview = request.ShowInReview;
             item.SortingType = request.SortingType;
             item.ModifiedDate = _clock.UtcNow;
+            item.IsEncrypted = request.IsEncrypted;
             await _notebookRepository.UpdateAsync(item, cancellationToken);
         }
     }

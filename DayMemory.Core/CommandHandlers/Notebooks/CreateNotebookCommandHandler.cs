@@ -27,6 +27,7 @@ namespace DayMemory.Core.CommandHandlers
                 Title = request.Title,
                 OrderRank = request.OrderRank,
                 ShowInReview = request.ShowInReview,
+                IsEncrypted = request.IsEncrypted,
                 CreatedDate = _clock.UtcNow,
                 SortingType = request.SortingType,
                 ModifiedDate = _clock.UtcNow,

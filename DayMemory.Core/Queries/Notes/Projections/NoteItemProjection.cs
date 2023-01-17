@@ -13,6 +13,8 @@ namespace DayMemory.Core.Queries.Projections
             
         public required long Date { get; set; }
 
+        public bool IsEncrypted { get; set; }
+
         public required long ModifiedDate { get; set; }
 
         public List<FileProjection>? MediaFiles { get; set; }

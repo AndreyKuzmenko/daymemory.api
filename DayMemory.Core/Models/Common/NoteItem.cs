@@ -25,6 +25,8 @@ namespace DayMemory.Core.Models.Personal
 
         public bool IsDeleted { get; set; }
 
+        public bool IsEncrypted { get; set; }
+
         public void SetFiles(string[] fileIds)
         {
             Files.Clear();
