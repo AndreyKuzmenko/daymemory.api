@@ -16,6 +16,7 @@ namespace DayMemory.Web.Api.Models
             this.FirstName = user.FirstName;
             this.LastName = user.LastName;
             this.Id = user.Id;
+            this.IsEncryptionEnabled = user.IsEncryptionEnabled;
         }
 
         public AccountModel(User user, string token)
@@ -25,14 +26,16 @@ namespace DayMemory.Web.Api.Models
             this.LastName = user.LastName;
             this.Id = user.Id;
             this.Token = token;
+            this.IsEncryptionEnabled = user.IsEncryptionEnabled;
         }
 
-        public AccountModel(string token, string email, string firstName, string lastName)
+        public AccountModel(string token, string email, string firstName, string lastName, bool isEncryptionEnabled)
         {
-            Token = token;
-            Email = email;
-            FirstName = firstName;
-            LastName = lastName;
+            this.Email = email;
+            this.FirstName = firstName;
+            this.LastName = lastName;
+            this.Token = token;
+            this.IsEncryptionEnabled = isEncryptionEnabled;
         }
 
         public string? Id { get; set; }
@@ -46,5 +49,7 @@ namespace DayMemory.Web.Api.Models
         public string? LastName { get; set; }
 
         public string? ProfileImageId { get; set; }
+
+        public bool IsEncryptionEnabled { get; set; }
     }
 }

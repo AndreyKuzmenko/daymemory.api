@@ -73,6 +73,31 @@ namespace DayMemory.Web.Areas.Mobile
         }
 
         [HttpPost]
+        [Route("api/account/enable-encryption")]
+        [Authorize]
+        public async Task<ActionResult> EnableEncryption()
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var userId = User.Identity!.Name!;
+            var user = await _userManager.FindByIdAsync(userId) as User;
+            if (user == null)
+            {
+                return BadRequest();
+            }
+
+            user.IsEncryptionEnabled = true;
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok();
+        }
+
+        [HttpPost]
         [Route("api/account/restore-password")]
         public async Task<ActionResult> RestorePassword(RestorePasswordInputModel model)
         {
