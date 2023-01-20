@@ -15,5 +15,8 @@ namespace DayMemory.Core.Models.Common
         public string? LastName { get; set; }
 
         public bool IsEncryptionEnabled { get; set; }
+
+        [MaxLength(255)]
+        public string? EncryptedText { get; set; }
     }
 }

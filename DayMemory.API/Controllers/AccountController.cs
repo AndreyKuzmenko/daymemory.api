@@ -75,7 +75,7 @@ namespace DayMemory.Web.Areas.Mobile
         [HttpPost]
         [Route("api/account/enable-encryption")]
         [Authorize]
-        public async Task<ActionResult> EnableEncryption()
+        public async Task<ActionResult> EnableEncryption(EnableEncryptionInputModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -88,6 +88,7 @@ namespace DayMemory.Web.Areas.Mobile
             }
 
             user.IsEncryptionEnabled = true;
+            user.EncryptedText = model.EncryptedText;
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
             {
