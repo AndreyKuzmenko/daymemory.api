@@ -18,7 +18,5 @@ namespace DayMemory.Core.Models.Common
 
         [MaxLength(255)]
         public string? EncryptedText { get; set; }
-
-        public string? RefreshToken { get; set; }
     }
 }

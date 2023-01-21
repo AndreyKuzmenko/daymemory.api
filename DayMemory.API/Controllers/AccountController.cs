@@ -16,6 +16,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
 using DayMemory.Core.Models.Exceptions;
+using DayMemory.Core.Interfaces.Repositories;
+using DayMemory.Core.Models.Personal;
 
 namespace DayMemory.Web.Areas.Mobile
 {
@@ -31,10 +33,11 @@ namespace DayMemory.Web.Areas.Mobile
         private readonly UrlSettings _urlSettings;
         private readonly IMediator _mediator;
         private readonly IEmailTemplateGenerator _emailTemplateGenerator;
+        private readonly IUserRepository _userRepository;
 
         public AccountController(UserManager<IdentityUser> userManager, ILogger<AccountController> logger,
             IJwTokenHelper jwTokenHelper, IEmailSender emailSender, IConfiguration configuration, SignInManager<IdentityUser> signInManager, UrlSettings urlSettings,
-            IMediator mediator, IEmailTemplateGenerator emailTemplateGenerator)
+            IMediator mediator, IEmailTemplateGenerator emailTemplateGenerator, IUserRepository userRepository)
         {
 
             _logger = logger;
@@ -45,6 +48,7 @@ namespace DayMemory.Web.Areas.Mobile
             _urlSettings = urlSettings;
             _mediator = mediator;
             _emailTemplateGenerator = emailTemplateGenerator;
+            this._userRepository = userRepository;
             _userManager = userManager;
         }
 
@@ -106,7 +110,7 @@ namespace DayMemory.Web.Areas.Mobile
 
         [HttpPost]
         [Route("api/account/restore-password")]
-        public async Task<ActionResult> RestorePassword(RestorePasswordInputModel model)
+        public async Task<ActionResult> RestorePassword(RestorePasswordInputModel model, CancellationToken ct)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -130,11 +134,8 @@ namespace DayMemory.Web.Areas.Mobile
                 return BadRequest("Can't restore password. Please contact Administrator.");
             }
 
-            var accessToken = await _jwTokenHelper.GenerateAccessToken(user);
-            var refreshToken = _jwTokenHelper.GenerateRefreshToken();
-            user.RefreshToken = refreshToken;
-            await _userManager.UpdateAsync(user);
-            return Ok(new AccountModel(user, accessToken, refreshToken));
+            var tokenResult = await ConfigureToken(user, ct);
+            return Ok(tokenResult);
         }
 
         [HttpPost]
@@ -166,7 +167,7 @@ namespace DayMemory.Web.Areas.Mobile
 
         [HttpPost]
         [Route("api/account/login")]
-        public async Task<ActionResult> Login(LoginInputModel model)
+        public async Task<ActionResult> Login(LoginInputModel model, CancellationToken ct)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -182,11 +183,26 @@ namespace DayMemory.Web.Areas.Mobile
                 return BadRequest("Invalid e-mail or password");
             }
 
+            var tokenResult = await ConfigureToken(user, ct);
+            return Ok(tokenResult);
+        }
+
+        private async Task<AccountModel> ConfigureToken(User user, CancellationToken ct)
+        {
             var accessToken = await _jwTokenHelper.GenerateAccessToken(user);
             var refreshToken = _jwTokenHelper.GenerateRefreshToken();
-            user.RefreshToken = refreshToken;
-            await _userManager.UpdateAsync(user);
-            return Ok(new AccountModel(user, accessToken, refreshToken));
+
+            var userToken = new UserToken()
+            {
+                Id = StringUtils.GenerateUniqueString(),
+                CreatedDate = DateTimeOffset.UtcNow,
+                ModifiedDate = DateTimeOffset.UtcNow,
+                UserId = user.Id,
+                RefreshToken = refreshToken
+            };
+
+            await _userRepository.CreateTokenAsync(userToken, ct);
+            return new AccountModel(user, accessToken, refreshToken);
         }
 
         [HttpPost]
@@ -207,7 +223,7 @@ namespace DayMemory.Web.Areas.Mobile
 
         [HttpPost]
         [Route("api/account/signup")]
-        public async Task<ActionResult<AccountModel>> Signup(SignupInputModel model)
+        public async Task<ActionResult<AccountModel>> Signup(SignupInputModel model, CancellationToken ct)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -233,16 +249,13 @@ namespace DayMemory.Web.Areas.Mobile
             }
             //await _mediator.Publish(new UserCreatedNotification() { UserId = user!.Id });
 
-            var accessToken = await _jwTokenHelper.GenerateAccessToken(user);
-            var refreshToken = _jwTokenHelper.GenerateRefreshToken();
-            user.RefreshToken = refreshToken;
-            await _userManager.UpdateAsync(user);
-            return Ok(new AccountModel(user!, accessToken, refreshToken));
+            var tokenResult = await ConfigureToken(user, ct);
+            return Ok(tokenResult);
         }
 
         [HttpPost]
         [Route("api/account/signup/social")]
-        public async Task<ActionResult> SocialSignup(SocialSignupInputModel model)
+        public async Task<ActionResult> SocialSignup(SocialSignupInputModel model, CancellationToken ct)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -288,24 +301,19 @@ namespace DayMemory.Web.Areas.Mobile
             }
             //await _mediator.Publish(new UserCreatedNotification() { UserId = user.Id });
             await _userManager.AddLoginAsync(user, new UserLoginInfo(model.ProviderType, model.Id, model.FirstName + model.LastName));
-            var accessToken = await _jwTokenHelper.GenerateAccessToken(user);
-            var refreshToken = _jwTokenHelper.GenerateRefreshToken();
-            user.RefreshToken = refreshToken;
-            await _userManager.UpdateAsync(user);
-            return Ok(new AccountModel(user!, accessToken, refreshToken));
+            var tokenResult = await ConfigureToken(user, ct);
+            return Ok(tokenResult);
         }
 
         [HttpPost]
         [Route("api/account/token/refresh")]
-        public async Task<IActionResult> RefreshToken(TokenModel tokenModel)
+        public async Task<IActionResult> RefreshToken(TokenModel tokenModel, CancellationToken ct)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            string? accessToken = tokenModel.AccessToken;
-            string? refreshToken = tokenModel.RefreshToken;
 
-            var principal = _jwTokenHelper.GetPrincipalFromExpiredToken(accessToken);
+            var principal = _jwTokenHelper.GetPrincipalFromExpiredToken(tokenModel.AccessToken);
             if (principal == null)
             {
                 return BadRequest("Invalid access token or refresh token");
@@ -314,8 +322,13 @@ namespace DayMemory.Web.Areas.Mobile
             string userId = principal!.Identity!.Name!;
 
             var user = await _userManager.FindByIdAsync(userId) as User;
+            if (user == null)
+            {
+                return BadRequest("Invalid access token or refresh token");
+            }
 
-            if (user == null || user.RefreshToken != refreshToken)
+            var userToken = await _userRepository.GetTokenAsync(tokenModel.RefreshToken, user.Id, ct);
+            if (userToken == null || userToken.RefreshToken != tokenModel.RefreshToken)
             {
                 return BadRequest("Invalid access token or refresh token");
             }
@@ -323,30 +336,15 @@ namespace DayMemory.Web.Areas.Mobile
             var newAccessToken = await _jwTokenHelper.GenerateAccessToken(user);
             var newRefreshToken = _jwTokenHelper.GenerateRefreshToken();
 
-            user.RefreshToken = newRefreshToken;
-            await _userManager.UpdateAsync(user);
+            userToken.RefreshToken = newRefreshToken;
+            userToken.ModifiedDate = DateTimeOffset.UtcNow;
+            await _userRepository.UpdateTokenAsync(userToken, ct);
 
             return Ok(new
             {
                 accessToken = newAccessToken,
                 refreshToken = newRefreshToken
             });
-        }
-
-        [Authorize]
-        [HttpPost]
-        [Route("api/account/token/revoke")]
-        public async Task<IActionResult> Revoke()
-        {
-            if (await _userManager.FindByNameAsync(User!.Identity!.Name!) is not User user)
-            {
-                return BadRequest("Invalid user name");
-            }
-
-            user.RefreshToken = null;
-            await _userManager.UpdateAsync(user);
-
-            return Ok();
         }
     }
 }
