@@ -5,44 +5,34 @@ namespace DayMemory.Web.Api.Models
 {
     public class AccountModel
     {
-        public AccountModel()
-        {
-        }
-
-        public AccountModel(User user)
+        public AccountModel(User user, string accessToken, string refreshToken)
         {
             this.Email = user.Email;
             this.FirstName = user.FirstName;
             this.LastName = user.LastName;
             this.Id = user.Id;
+            this.AccessToken = accessToken;
+            this.RefreshToken = refreshToken;
             this.IsEncryptionEnabled = user.IsEncryptionEnabled;
             this.EncryptedText = user.EncryptedText;
         }
 
-        public AccountModel(User user, string token)
-        {
-            this.Email = user.Email;
-            this.FirstName = user.FirstName;
-            this.LastName = user.LastName;
-            this.Id = user.Id;
-            this.Token = token;
-            this.IsEncryptionEnabled = user.IsEncryptionEnabled;
-            this.EncryptedText = user.EncryptedText;
-        }
-
-        public AccountModel(string token, string email, string firstName, string lastName, bool isEncryptionEnabled, string encryptedText)
+        public AccountModel(string accessToken, string refreshToken, string email, string firstName, string lastName, bool isEncryptionEnabled, string encryptedText)
         {
             this.Email = email;
             this.FirstName = firstName;
             this.LastName = lastName;
-            this.Token = token;
+            this.AccessToken = accessToken;
+            this.RefreshToken = refreshToken;
             this.IsEncryptionEnabled = isEncryptionEnabled;
             this.EncryptedText = encryptedText;
         }
 
         public string? Id { get; set; }
 
-        public string? Token { get; set; }
+        public string? AccessToken { get; set; }
+
+        public string? RefreshToken { get; set; }
 
         public string? Email { get; set; }
 

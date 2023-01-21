@@ -120,10 +120,10 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireDigit = false;
 });
 
-var tokenKey = builder.Configuration.GetValue<string>("Secret");
+var tokenKey = builder.Configuration.GetValue<string>("JWT:Secret");
 if (tokenKey == null)
 {
-    throw new ConfigurationException("Secret");
+    throw new ConfigurationException("JWT:Secret");
 }
 var key = Encoding.ASCII.GetBytes(tokenKey);
 
@@ -143,7 +143,18 @@ builder.Services.AddAuthentication(x =>
             IssuerSigningKey = new SymmetricSecurityKey(key),
             ValidateIssuer = false,
             AuthenticationType = JwtBearerDefaults.AuthenticationScheme,
-            ValidateAudience = false
+            ValidateAudience = false,
+            ClockSkew = TimeSpan.Zero
+        };
+        x.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context => {
+                if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                {
+                    context.Response.Headers.Add("IS-TOKEN-EXPIRED", "true");
+                }
+                return Task.CompletedTask;
+            }
         };
     })
     .AddCookie(
