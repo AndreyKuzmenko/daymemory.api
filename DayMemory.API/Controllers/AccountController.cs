@@ -263,9 +263,8 @@ namespace DayMemory.Web.Areas.Mobile
             var user = await _userManager.FindByLoginAsync(model.ProviderType, model.Id) as User;
             if (user != null)
             {
-                var accessToken1 = await _jwTokenHelper.GenerateAccessToken(user!);
-                var refreshToken1 = _jwTokenHelper.GenerateRefreshToken();
-                return Ok(new AccountModel(user!, accessToken1, refreshToken1));
+                var tokenRes = await ConfigureToken(user, ct);
+                return Ok(tokenRes);
             }
 
             if (string.IsNullOrEmpty(model.Email))
