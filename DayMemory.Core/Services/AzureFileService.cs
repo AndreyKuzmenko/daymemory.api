@@ -1,6 +1,7 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using DayMemory.Core.Models.Exceptions;
+using DayMemory.Core.Services.Interfaces;
 using DayMemory.Core.Settings;
 using Microsoft.Extensions.Configuration;
 

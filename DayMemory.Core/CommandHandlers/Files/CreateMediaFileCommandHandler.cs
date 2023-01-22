@@ -4,7 +4,7 @@ using DayMemory.Core.Commands.Files;
 using DayMemory.Core.Interfaces.Repositories;
 using DayMemory.Core.Models.Common;
 using DayMemory.Core.Models.Personal;
-using DayMemory.Core.Services;
+using DayMemory.Core.Services.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Internal;
@@ -86,7 +86,7 @@ namespace DayMemory.Core.CommandHandlers.Files
 
                 //using (var fileStream = System.IO.File.OpenRead(filePath))
                 //{
-                var fileUrl = await _fileService.UploadFileToCloudStorage(stream/*fileStream*/, request.FormFile.ContentType, $"{request.UserId}/{request.FileId}");
+                var fileUrl = await _fileService.UploadFileToCloudStorage(stream/*fileStream*/, request.FormFile.ContentType, $"{request.UserId}/{request.FileId}/original");
                 await _fileRepository.CreateAsync(new File
                 {
                     Id = request.FileId!,

@@ -4,6 +4,7 @@ using DayMemory.Core.Models;
 using DayMemory.Core.Models.Personal;
 using DayMemory.Core.Queries;
 using DayMemory.Core.Services;
+using DayMemory.Core.Services.Interfaces;
 //using DayMemory.Web.Components.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -54,8 +55,6 @@ namespace DayMemory.API.Controllers
             {
                 return BadRequest("File type is unknown.");
             }
-
-            
             
             var userId = User.Identity!.Name!;
             var command = new CreateMediaFileCommand()

@@ -2,7 +2,7 @@
 using Azure.Storage.Blobs.Models;
 using DayMemory.Core.Settings;
 
-namespace DayMemory.Core.Services
+namespace DayMemory.Core.Services.Interfaces
 {
     public interface IFileService
     {

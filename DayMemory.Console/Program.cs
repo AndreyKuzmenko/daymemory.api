@@ -38,40 +38,6 @@ Console.WriteLine("End");
 
 
 
-
-
-
-
-(byte[] FileContents, int Height, int Width) Resize(byte[] fileContents, decimal maxLength, SKFilterQuality quality = SKFilterQuality.Medium)
-{
-    using MemoryStream ms = new MemoryStream(fileContents);
-    using SKBitmap sourceBitmap = SKBitmap.Decode(ms);
-
-    var size = GetScaleSize(sourceBitmap, maxLength);
-
-    using SKBitmap scaledBitmap = sourceBitmap.Resize(new SKImageInfo(size.Width, size.Height), quality);
-    using SKImage scaledImage = SKImage.FromBitmap(scaledBitmap);
-
-    using SKData data = scaledImage.Encode(SKEncodedImageFormat.Jpeg, 70);
-
-    return (data.ToArray(), size.Height, size.Width);
-}
-
-Size GetScaleSize(SKBitmap bitmap, decimal max)
-{
-
-    decimal scale = 1;
-
-    var maxLength = Math.Max(bitmap.Width, bitmap.Height);
-
-    if (maxLength > max)
-    {
-        scale = max / maxLength;
-    }
-
-    return new Size((int)(bitmap.Width * scale), (int)(bitmap.Height * scale));
-}
-
 async Task ResizeImages(string? storageConnectionString, string? containerName, DayMemoryDbContext dbContext)
 {
     var users = await dbContext.Set<User>().ToListAsync();
@@ -98,14 +64,18 @@ async Task ResizeImages(string? storageConnectionString, string? containerName, 
                 {
                     await sourceBlob.DownloadToAsync(stream);
                     stream.Position = 0;
-                    using (var skImage = SKImage.FromEncodedData(stream))
-                    {
-                        var result = Resize(skImage.EncodedData.ToArray(), 1500, SKFilterQuality.Medium);
 
-                        using (var destStream = new MemoryStream(result.FileContents))
+                    try
+                    {
+                        var result = new ImageService().ResizeImage(stream.ToArray(), 1500, 70);
+                        using (var destStream = new MemoryStream(result.Item1))
                         {
                             await destBlob.UploadAsync(destStream, new BlobUploadOptions() { HttpHeaders = new BlobHttpHeaders() { ContentType = "image/jpeg" } });
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Error: " + item.Id);
                     }
                 }
             }

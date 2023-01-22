@@ -23,6 +23,7 @@ using DayMemory.Core;
 using Microsoft.Extensions.Logging;
 using DayMemory.API.Components;
 using Microsoft.AspNetCore.DataProtection;
+using DayMemory.Core.Services.Interfaces;
 
 string CorsPolicyName = "DayMemoryCorsPolicy";
 
@@ -75,6 +76,7 @@ builder.Services.AddTransient<IJwTokenHelper, JwTokenHelper>();
 builder.Services.AddTransient<ISystemClock, SystemClock>();
 builder.Services.AddTransient<IFileService, AzureFileService>();
 builder.Services.AddTransient<IUrlResolver, UrlResolver>();
+builder.Services.AddTransient<IImageService, ImageService>();
 
 
 
