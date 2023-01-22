@@ -8,7 +8,9 @@ namespace DayMemory.Core.Queries.Files.Projections
 
         public string? Name { get; set; }
 
-        public required string Url { get; set; }
+        public required string OriginalUrl { get; set; }
+
+        public required string ResizedUrl { get; set; }
 
         public int FileSize { get; set; }
 

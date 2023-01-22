@@ -31,12 +31,15 @@ namespace DayMemory.DAL.QueryHandlers.Files
                 return null;
             }
 
-            var fileUrlTemplate = _urlResolver.GetOriginalFileUrlTemplate(request.UserId!);
+            var originalFileUrlTemplate = _urlResolver.GetOriginalFileUrlTemplate(request.UserId!);
+            var resizedFileUrlTemplate = _urlResolver.GetResizedFileUrlTemplate(request.UserId!);
+
             return new FileProjection()
             {
                 Id = file.Id,
                 FileSize = file.FileSize,
-                Url = string.Format(fileUrlTemplate, file.Id),
+                OriginalUrl = string.Format(originalFileUrlTemplate, file.Id),
+                ResizedUrl = string.Format(resizedFileUrlTemplate, file.Id),
                 FileType = file.FileType,
                 Name = file.FileName,
                 Width = file.Width,

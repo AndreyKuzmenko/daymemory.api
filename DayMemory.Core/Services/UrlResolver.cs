@@ -9,6 +9,8 @@ namespace DayMemory.Core.Services
     public interface IUrlResolver
     {
         string GetOriginalFileUrlTemplate(string userId);
+
+        string GetResizedFileUrlTemplate(string userId);
     }
 
     public class UrlResolver : IUrlResolver
@@ -26,6 +28,12 @@ namespace DayMemory.Core.Services
         {
             var containerName = _configuration["FileStorage:Container"];
             return $"{_urlSettings.BlobStorageRootUrl}/{containerName}/{userId}/{{0}}/original";
+        }
+
+        public string GetResizedFileUrlTemplate(string userId)
+        {
+            var containerName = _configuration["FileStorage:Container"];
+            return $"{_urlSettings.BlobStorageRootUrl}/{containerName}/{userId}/{{0}}/resized";
         }
     }
 }

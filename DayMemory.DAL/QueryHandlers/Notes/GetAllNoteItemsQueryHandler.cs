@@ -23,8 +23,9 @@ namespace DayMemory.DAL.QueryHandlers.Notes
 
         public async Task<IList<NoteItemProjection>> Handle(GetAllNoteItemsQuery request, CancellationToken cancellationToken)
         {
-            var fileUrlTemplate = _urlResolver.GetOriginalFileUrlTemplate(request.UserId!);
-
+            var originalFileUrlTemplate = _urlResolver.GetOriginalFileUrlTemplate(request.UserId!);
+            var resizedFileUrlTemplate = _urlResolver.GetResizedFileUrlTemplate(request.UserId!);
+            
             var query = _readDbContext.GetQuery<NoteItem>()
                 .Include(i => i.Location)
                 .Include(i => i.Files)
@@ -65,7 +66,8 @@ namespace DayMemory.DAL.QueryHandlers.Notes
                      {
                          Id = i.File!.Id,
                          Name = i.File.FileName,
-                         Url = string.Format(fileUrlTemplate, i.File.Id),
+                         OriginalUrl = string.Format(originalFileUrlTemplate, i.File.Id),
+                         ResizedUrl = string.Format(resizedFileUrlTemplate, i.File.Id),
                          FileSize = i.File.FileSize,
                          FileType = i.File.FileType,
                          Width = i.File.Width,

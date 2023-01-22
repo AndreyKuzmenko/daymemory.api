@@ -13,6 +13,10 @@ using Microsoft.Extensions.Internal;
 using System.IO;
 using File = DayMemory.Core.Models.Personal.File;
 using DayMemory.Core.Models.Common;
+using SkiaSharp;
+using static System.Net.WebRequestMethods;
+using static System.Net.Mime.MediaTypeNames;
+using System.Drawing;
 
 var builder = new ConfigurationBuilder()
  .AddJsonFile($"appsettings.Development.json", true, true);
@@ -27,31 +31,139 @@ var optionsBuilder = new DbContextOptionsBuilder<DayMemoryDbContext>();
 optionsBuilder.UseSqlServer(connectionString);
 var dbContext = new DayMemoryDbContext(optionsBuilder.Options);
 
-var users = await dbContext.Set<User>().ToListAsync();
+//await CleanFiles(storageConnectionString, destContainerName, dbContext);
+await ResizeImages(storageConnectionString, destContainerName, dbContext);
 
-foreach (var user in users)
+Console.WriteLine("End");
+
+
+
+
+
+
+
+(byte[] FileContents, int Height, int Width) Resize(byte[] fileContents, decimal maxLength, SKFilterQuality quality = SKFilterQuality.Medium)
 {
-    var files = await dbContext.Set<File>().Where(x => x.UserId == user.Id).ToListAsync();
+    using MemoryStream ms = new MemoryStream(fileContents);
+    using SKBitmap sourceBitmap = SKBitmap.Decode(ms);
+
+    var size = GetScaleSize(sourceBitmap, maxLength);
+
+    using SKBitmap scaledBitmap = sourceBitmap.Resize(new SKImageInfo(size.Width, size.Height), quality);
+    using SKImage scaledImage = SKImage.FromBitmap(scaledBitmap);
+
+    using SKData data = scaledImage.Encode(SKEncodedImageFormat.Jpeg, 70);
+
+    return (data.ToArray(), size.Height, size.Width);
+}
+
+Size GetScaleSize(SKBitmap bitmap, decimal max)
+{
+
+    decimal scale = 1;
+
+    var maxLength = Math.Max(bitmap.Width, bitmap.Height);
+
+    if (maxLength > max)
+    {
+        scale = max / maxLength;
+    }
+
+    return new Size((int)(bitmap.Width * scale), (int)(bitmap.Height * scale));
+}
+
+async Task ResizeImages(string? storageConnectionString, string? containerName, DayMemoryDbContext dbContext)
+{
+    var users = await dbContext.Set<User>().ToListAsync();
+
+    foreach (var user in users)
+    {
+        var files = await dbContext.Set<File>().Where(x => x.UserId == user.Id).ToListAsync();
+        foreach (var item in files.Where(x => x.FileType == FileType.Image))
+        {
+            var sourceBlobContainerClient = new BlobContainerClient(storageConnectionString, containerName);
+            BlobClient sourceBlob = sourceBlobContainerClient.GetBlobClient($"{user.Id}/{item.Id}/original");
+
+            var destBlobContainerClient = new BlobContainerClient(storageConnectionString, containerName);
+            BlobClient destBlob = destBlobContainerClient.GetBlobClient($"{user.Id}/{item.Id}/resized");
+
+            if (await sourceBlob.ExistsAsync() /*&& !await destBlob.ExistsAsync()*/)
+            {
+                if (await destBlob.ExistsAsync())
+                {
+                    await destBlob.DeleteAsync();
+                }
+
+                using (var stream = new MemoryStream())
+                {
+                    await sourceBlob.DownloadToAsync(stream);
+                    stream.Position = 0;
+                    using (var skImage = SKImage.FromEncodedData(stream))
+                    {
+                        var result = Resize(skImage.EncodedData.ToArray(), 1500, SKFilterQuality.Medium);
+
+                        using (var destStream = new MemoryStream(result.FileContents))
+                        {
+                            await destBlob.UploadAsync(destStream, new BlobUploadOptions() { HttpHeaders = new BlobHttpHeaders() { ContentType = "image/jpeg" } });
+                        }
+                    }
+                }
+            }
+            Console.WriteLine(item.Id);
+        }
+
+    }
+}
+
+static async Task MigrateFiles(string? storageConnectionString, string? destContainerName, DayMemoryDbContext dbContext)
+{
+    var users = await dbContext.Set<User>().ToListAsync();
+
+    foreach (var user in users)
+    {
+        var files = await dbContext.Set<File>().Where(x => x.UserId == user.Id).ToListAsync();
+        foreach (var item in files)
+        {
+            var sourceContainerName = "note-images";
+            var sourceBlobContainerClient = new BlobContainerClient(storageConnectionString, sourceContainerName);
+            BlobClient sourceBlob = sourceBlobContainerClient.GetBlobClient($"{user.Id}/{item.Id}");
+
+            var destBlobContainerClient = new BlobContainerClient(storageConnectionString, destContainerName);
+            BlobClient destBlob = destBlobContainerClient.GetBlobClient($"{user.Id}/{item.Id}/original");
+
+            if (await sourceBlob.ExistsAsync())
+            {
+                if (!await destBlob.ExistsAsync())
+                {
+                    await destBlob.StartCopyFromUriAsync(sourceBlob.Uri);
+                }
+            }
+            Console.WriteLine(item.Id);
+        }
+
+    }
+}
+
+static async Task CleanFiles(string? storageConnectionString, string? destContainerName, DayMemoryDbContext dbContext)
+{
+
+    var files = await dbContext.Set<File>().ToListAsync();
     foreach (var item in files)
     {
-        var sourceContainerName = "note-images";
-        var sourceBlobContainerClient = new BlobContainerClient(storageConnectionString, sourceContainerName);
-        BlobClient sourceBlob = sourceBlobContainerClient.GetBlobClient($"{user.Id}/{item.Id}");
+        if (await dbContext.Set<NoteFile>().AnyAsync(x => x.FileId == item.Id))
+        {
+            continue;
+        }
 
-        var destBlobContainerClient = new BlobContainerClient(storageConnectionString, destContainerName);
-        BlobClient destBlob = destBlobContainerClient.GetBlobClient($"{user.Id}/{item.Id}/original");
+        var sourceBlobContainerClient = new BlobContainerClient(storageConnectionString, destContainerName);
+        BlobClient sourceBlob = sourceBlobContainerClient.GetBlobClient($"{item.UserId}/{item.Id}/original");
 
         if (await sourceBlob.ExistsAsync())
         {
-            if (!await destBlob.ExistsAsync())
-            {
-                await destBlob.StartCopyFromUriAsync(sourceBlob.Uri);
-            }
+            await sourceBlob.DeleteAsync();
         }
         Console.WriteLine(item.Id);
     }
 
+
 }
-
-Console.WriteLine("End");
-
