@@ -364,3 +364,4 @@ FodyWeavers.xsd
 #settings excluded
 appsettings.Development.json
 appsettings.Release.json
+/DayMemory.Console/appsettings.Development.json
