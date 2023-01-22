@@ -31,7 +31,7 @@ namespace DayMemory.DAL.QueryHandlers.Files
                 return null;
             }
 
-            var fileUrlTemplate = _urlResolver.GetFileUrlTemplate(request.UserId!);
+            var fileUrlTemplate = _urlResolver.GetOriginalFileUrlTemplate(request.UserId!);
             return new FileProjection()
             {
                 Id = file.Id,

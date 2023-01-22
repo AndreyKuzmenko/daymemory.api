@@ -1,5 +1,6 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using DayMemory.Core.Models.Exceptions;
 using DayMemory.Core.Settings;
 using Microsoft.Extensions.Configuration;
 
@@ -15,12 +16,16 @@ namespace DayMemory.Core.Services
             this.configuration = configuration;
             this._urlSettings = urlSettings;
         }
-        public async Task<string> UploadFileToCloudStorage(Stream stream, string contentType, string fileId)
+        public async Task<string> UploadFileToCloudStorage(Stream stream, string contentType, string filePath)
         {
-            var containerName = "note-images";
+            var containerName = configuration["FileStorage:Container"];
+            if (string.IsNullOrEmpty(containerName))
+            {
+                throw new ConfigurationException("FileStorage:Container");
+            }
             var blobContainerClient = new BlobContainerClient(_urlSettings.StorageConnectionString, containerName);
 
-            BlobClient blob = blobContainerClient.GetBlobClient(fileId);
+            BlobClient blob = blobContainerClient.GetBlobClient($"{filePath}/original");
 
             await blob.UploadAsync(stream, new BlobUploadOptions() { HttpHeaders = new BlobHttpHeaders() { ContentType = contentType } });
 

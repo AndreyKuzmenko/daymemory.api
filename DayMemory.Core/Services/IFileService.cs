@@ -6,6 +6,6 @@ namespace DayMemory.Core.Services
 {
     public interface IFileService
     {
-        Task<string> UploadFileToCloudStorage(Stream stream, string contentType, string fileId);
+        Task<string> UploadFileToCloudStorage(Stream stream, string contentType, string filePath);
     }
 }

@@ -24,7 +24,7 @@ namespace DayMemory.DAL.QueryHandlers.Notes
 
         public async Task<SyncListProjection<SyncNoteItemProjection>> Handle(GetSyncNoteItemsQuery request, CancellationToken cancellationToken)
         {
-            var fileUrlTemplate = _urlResolver.GetFileUrlTemplate(request.UserId!);
+            var fileUrlTemplate = _urlResolver.GetOriginalFileUrlTemplate(request.UserId!);
             var query = _readDbContext.GetQuery<NoteItem>()
                 .Include(i => i.Location)
                 .Include(i => i.Files)
