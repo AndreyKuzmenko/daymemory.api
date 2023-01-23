@@ -67,11 +67,10 @@ async Task ResizeImages(string? storageConnectionString, string? containerName, 
 
                     try
                     {
-                        var result = new ImageService().ResizeImage(stream.ToArray(), 1500, 70);
-                        using (var destStream = new MemoryStream(result.Item1))
-                        {
-                            await destBlob.UploadAsync(destStream, new BlobUploadOptions() { HttpHeaders = new BlobHttpHeaders() { ContentType = "image/jpeg" } });
-                        }
+                        var result = await new ImageService().ResizeImageAsync(stream, 1500, 70);
+                        await destBlob.UploadAsync(result.Stream, new BlobUploadOptions() { HttpHeaders = new BlobHttpHeaders() { ContentType = "image/jpeg" } });
+                        result.Stream.Dispose();
+
                     }
                     catch (Exception ex)
                     {

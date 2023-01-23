@@ -6,9 +6,17 @@ using System.Drawing;
 
 namespace DayMemory.Core.Services.Interfaces
 {
+    public class ResizedImage {
+        public required Stream Stream { get; set; }
+
+        public int Width { get; set; }
+
+        public int Height { get; set; }
+    }
+
     public interface IImageService
     {
-        Tuple<byte[], int, int> ResizeImage(byte[] bytes, int maxSize, int quality);
+        Task<ResizedImage> ResizeImageAsync(Stream stream, int maxSize, int quality);
     }
 
 }

@@ -3,10 +3,12 @@ using DayMemory.Core.Commands;
 using DayMemory.Core.Commands.Files;
 using DayMemory.Core.Interfaces.Repositories;
 using DayMemory.Core.Models.Common;
+using DayMemory.Core.Models.Exceptions;
 using DayMemory.Core.Models.Personal;
 using DayMemory.Core.Services.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Internal;
 using SkiaSharp;
 using System.Drawing;
@@ -23,12 +25,16 @@ namespace DayMemory.Core.CommandHandlers.Files
         private readonly IFileRepository _fileRepository;
         private readonly IFileService _fileService;
         private readonly ISystemClock _clock;
+        private readonly IImageService _imageService;
+        private readonly IConfiguration _configuration;
 
-        public CreateMediaFileCommandHandler(IFileRepository fileRepository, IFileService fileService, ISystemClock clock)
+        public CreateMediaFileCommandHandler(IFileRepository fileRepository, IFileService fileService, ISystemClock clock, IImageService imageService, IConfiguration configuration)
         {
             _fileRepository = fileRepository;
             _fileService = fileService;
             _clock = clock;
+            this._imageService = imageService;
+            this._configuration = configuration;
         }
 
         public async Task<string> Handle(CreateMediaFileCommand request, CancellationToken cancellationToken)
@@ -87,6 +93,25 @@ namespace DayMemory.Core.CommandHandlers.Files
                 //using (var fileStream = System.IO.File.OpenRead(filePath))
                 //{
                 var fileUrl = await _fileService.UploadFileToCloudStorage(stream/*fileStream*/, request.FormFile.ContentType, $"{request.UserId}/{request.FileId}/original");
+
+                if (request.FileType == FileType.Image)
+                {
+                    var maxFileLength = _configuration.GetValue<int>("FileStorage:MaxFileLength");
+                    if (maxFileLength == 0)
+                    {
+                        throw new ConfigurationException("FileStorage:MaxFileLength");
+                    }
+                    var imageFileQuality = _configuration.GetValue<int>("FileStorage:ImageFileQuality");
+                    if (imageFileQuality == 0)
+                    {
+                        throw new ConfigurationException("FileStorage:imageFileQuality");
+                    }
+                    stream.Position = 0;
+                    var resizedImage = await _imageService.ResizeImageAsync(stream, maxFileLength, imageFileQuality);
+                    await _fileService.UploadFileToCloudStorage(resizedImage.Stream, request.FormFile.ContentType, $"{request.UserId}/{request.FileId}/resized");
+                    resizedImage.Stream.Dispose();
+                }
+
                 await _fileRepository.CreateAsync(new File
                 {
                     Id = request.FileId!,

@@ -11,26 +11,25 @@ namespace DayMemory.Core.Services
 {
     public class ImageService : IImageService
     {
-        public Tuple<byte[], int, int> ResizeImage(byte[] bytes, int maxSize, int quality)
+        public async Task<ResizedImage> ResizeImageAsync(Stream stream, int maxSize, int quality)
         {
-            using (SKImage img = SKImage.FromEncodedData(bytes))
-            {
-                using (SKBitmap sourceBitmap = SKBitmap.FromImage(img))
-                {
-                    var size = GetScaleSize(sourceBitmap, maxSize);
+            using var memoryStream = new MemoryStream();
 
-                    using (SKBitmap scaledBitmap = sourceBitmap.Resize(new SKImageInfo(size.Width, size.Height), SKFilterQuality.High))
-                    {
-                        using (SKImage scaledImage = SKImage.FromBitmap(scaledBitmap))
-                        {
-                            using (SKData data = scaledImage.Encode(SKEncodedImageFormat.Jpeg, quality))
-                            {
-                                return new Tuple<byte[], int, int>(data.ToArray(), size.Height, size.Width);
-                            }
-                        }
-                    }
-                }
-            }
+            await stream.CopyToAsync(stream);
+            using SKImage img = SKImage.FromEncodedData(memoryStream.ToArray());
+            using SKBitmap sourceBitmap = SKBitmap.FromImage(img);
+
+            var size = GetScaleSize(sourceBitmap, maxSize);
+
+            using SKBitmap scaledBitmap = sourceBitmap.Resize(new SKImageInfo(size.Width, size.Height), SKFilterQuality.High);
+            using SKImage scaledImage = SKImage.FromBitmap(scaledBitmap);
+            using SKData data = scaledImage.Encode(SKEncodedImageFormat.Jpeg, quality);
+
+            var resultStream = new MemoryStream();
+            var array = data.ToArray();
+            await resultStream.WriteAsync(array);
+
+            return new ResizedImage() { Stream = resultStream, Width = size.Width, Height = size.Height };
         }
 
         private Size GetScaleSize(SKBitmap bitmap, decimal max)
