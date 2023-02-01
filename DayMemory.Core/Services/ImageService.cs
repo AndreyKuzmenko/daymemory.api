@@ -15,7 +15,7 @@ namespace DayMemory.Core.Services
         {
             using var memoryStream = new MemoryStream();
 
-            await stream.CopyToAsync(stream);
+            await stream.CopyToAsync(memoryStream);
             using SKImage img = SKImage.FromEncodedData(memoryStream.ToArray());
             using SKBitmap sourceBitmap = SKBitmap.FromImage(img);
 
@@ -28,7 +28,7 @@ namespace DayMemory.Core.Services
             var resultStream = new MemoryStream();
             var array = data.ToArray();
             await resultStream.WriteAsync(array);
-
+            resultStream.Position = 0;
             return new ResizedImage() { Stream = resultStream, Width = size.Width, Height = size.Height };
         }
 
