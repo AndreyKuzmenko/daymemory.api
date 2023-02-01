@@ -333,16 +333,16 @@ namespace DayMemory.Web.Areas.Mobile
             }
 
             var newAccessToken = await _jwTokenHelper.GenerateAccessToken(user);
-            var newRefreshToken = _jwTokenHelper.GenerateRefreshToken();
+            //var newRefreshToken = _jwTokenHelper.GenerateRefreshToken();
 
-            userToken.RefreshToken = newRefreshToken;
-            userToken.ModifiedDate = DateTimeOffset.UtcNow;
-            await _userRepository.UpdateTokenAsync(userToken, ct);
+            //userToken.RefreshToken = newRefreshToken;
+            //userToken.ModifiedDate = DateTimeOffset.UtcNow;
+            //await _userRepository.UpdateTokenAsync(userToken, ct);
 
             return Ok(new
             {
                 accessToken = newAccessToken,
-                refreshToken = newRefreshToken
+                refreshToken = userToken //newRefreshToken
             });
         }
     }
