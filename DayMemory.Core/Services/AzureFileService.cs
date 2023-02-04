@@ -26,7 +26,7 @@ namespace DayMemory.Core.Services
             }
             var blobContainerClient = new BlobContainerClient(_urlSettings.StorageConnectionString, containerName);
 
-            BlobClient blob = blobContainerClient.GetBlobClient($"{filePath}/original");
+            BlobClient blob = blobContainerClient.GetBlobClient($"{filePath}");
 
             await blob.UploadAsync(stream, new BlobUploadOptions() { HttpHeaders = new BlobHttpHeaders() { ContentType = contentType } });
 
