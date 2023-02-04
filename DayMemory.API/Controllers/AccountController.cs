@@ -342,7 +342,7 @@ namespace DayMemory.Web.Areas.Mobile
             return Ok(new
             {
                 accessToken = newAccessToken,
-                refreshToken = userToken //newRefreshToken
+                refreshToken = userToken.RefreshToken //newRefreshToken
             });
         }
     }
