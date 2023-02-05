@@ -365,3 +365,4 @@ FodyWeavers.xsd
 appsettings.Development.json
 appsettings.Release.json
 /DayMemory.Console/appsettings.Development.json
+/DayMemory.VideoConverter/local.settings.json
