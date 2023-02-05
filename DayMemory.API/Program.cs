@@ -24,6 +24,9 @@ using Microsoft.Extensions.Logging;
 using DayMemory.API.Components;
 using Microsoft.AspNetCore.DataProtection;
 using DayMemory.Core.Services.Interfaces;
+using Google.Api;
+using Hangfire;
+using Hangfire.SqlServer;
 
 string CorsPolicyName = "DayMemoryCorsPolicy";
 
@@ -109,6 +112,22 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddHangfire(configuration => configuration
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UseSqlServerStorage(builder.Configuration.GetConnectionString("DefaultConnection"), new SqlServerStorageOptions
+    {
+        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+        QueuePollInterval = TimeSpan.Zero,
+        UseRecommendedIsolationLevel = true,
+        DisableGlobalLocks = true
+    }));
+
+// Add the processing server as IHostedService
+builder.Services.AddHangfireServer();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -223,6 +242,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    //Authorization = new[] { new AdminAuthorizationFilter() }
+});
 
 app.MapGet("/env", async context =>
 {

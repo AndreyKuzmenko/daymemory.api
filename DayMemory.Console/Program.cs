@@ -32,7 +32,7 @@ optionsBuilder.UseSqlServer(connectionString);
 var dbContext = new DayMemoryDbContext(optionsBuilder.Options);
 
 //await CleanFiles(storageConnectionString, destContainerName, dbContext);
-await ResizeImages(storageConnectionString, destContainerName, dbContext);
+//await ResizeImages(storageConnectionString, destContainerName, dbContext);
 
 Console.WriteLine("End");
 

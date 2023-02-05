@@ -45,26 +45,6 @@ namespace DayMemory.Core.CommandHandlers.Files
                 return request.FileId!;
             }
 
-            //string tempPath = "\\wwwroot";
-            //var exeFolder = Path.Combine(tempPath, "ffmpeg");
-            //var inputFileFolder = Path.Combine(tempPath, "ffmpeg", request.FileId!);
-            //var outputFileFolder = Path.Combine(tempPath, "ffmpeg", request.FileId!);
-
-            //if (!Directory.Exists(inputFileFolder))
-            //{
-            //    Directory.CreateDirectory(inputFileFolder);
-            //}
-
-            //if (!Directory.Exists(exeFolder))
-            //{
-            //    Directory.CreateDirectory(exeFolder);
-            //}
-
-            //FFmpeg.SetExecutablesPath(exeFolder);
-            //await FFmpegDownloader.GetLatestVersion(FFmpegVersion.Official, exeFolder);
-
-
-
             using (var stream = request.FormFile.OpenReadStream())
             {
 
