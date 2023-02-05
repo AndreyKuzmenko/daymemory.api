@@ -366,3 +366,5 @@ appsettings.Development.json
 appsettings.Release.json
 /DayMemory.Console/appsettings.Development.json
 /DayMemory.VideoConverter/local.settings.json
+/DayMemory.VideoConverter/Properties/ServiceDependencies/daymemory-video-converter - Zip Deploy/profile.arm.json
+/DayMemory.VideoConverter/Properties/ServiceDependencies/day-memory-vc - Zip Deploy/profile.arm.json
