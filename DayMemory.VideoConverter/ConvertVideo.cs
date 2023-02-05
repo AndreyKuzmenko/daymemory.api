@@ -13,11 +13,14 @@ using Azure.Storage.Blobs.Models;
 using Xabe.FFmpeg;
 using Xabe.FFmpeg.Downloader;
 using Microsoft.Extensions.Configuration;
+using System.IO.Pipes;
 
 namespace DayMemory.VideoConverter
 {
     public class VideoParams
     {
+        public string ConverterContainerName { get; set; }
+
         public string ContainerName { get; set; }
 
         public string UserId { get; set; }
@@ -54,7 +57,7 @@ namespace DayMemory.VideoConverter
                 storageConnectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage");
             }
 
-            log.LogInformation($"Video Procession has been started for: '{inputParams.FileId}'");
+            log.LogInformation($"Video processing has been started for: '{inputParams.FileId}'");
 
 
             string tempPath = Path.GetTempPath();
@@ -74,7 +77,41 @@ namespace DayMemory.VideoConverter
 
             log.LogInformation($"Loading converter");
             FFmpeg.SetExecutablesPath(exeFolder);
-            await FFmpegDownloader.GetLatestVersion(FFmpegVersion.Official, exeFolder);
+            //await FFmpegDownloader.GetLatestVersion(FFmpegVersion.Official, exeFolder);
+
+            var converterContainerClient = new BlobContainerClient(storageConnectionString, inputParams.ConverterContainerName);
+            BlobClient mpegBlob = converterContainerClient.GetBlobClient($"ffmpeg.exe");
+            BlobClient probeBlob = converterContainerClient.GetBlobClient($"ffprobe.exe");
+
+            var ffmpegExeFilePath = Path.Combine(exeFolder, $"ffmpeg.exe");
+
+            if (!System.IO.File.Exists(ffmpegExeFilePath))
+            {
+                using (var fileStream = System.IO.File.Create(ffmpegExeFilePath))
+                {
+                    log.LogInformation($"Downloading ffmpeg.exe");
+                    var b = await mpegBlob.DownloadToAsync(fileStream);
+                    if (b.IsError)
+                    {
+                        throw new InvalidOperationException("Can't download ffmpeg.exe");
+                    }
+                }
+            }
+
+            var ffprobeExeFilePath = Path.Combine(exeFolder, $"ffprobe.exe");
+            if (!System.IO.File.Exists(ffprobeExeFilePath))
+            {
+                using (var fileStream = System.IO.File.Create(ffprobeExeFilePath))
+                {
+                    log.LogInformation($"Downloading ffprobe.exe");
+                    var b = await probeBlob.DownloadToAsync(fileStream);
+                    if (b.IsError)
+                    {
+                        throw new InvalidOperationException("Can't download ffprobe.exe");
+                    }
+                }
+            }
+
             log.LogInformation($"Converter loaded");
 
             var inputFilePath = Path.Combine(inputFileFolder, $"{inputParams.InputFileName}");
@@ -91,6 +128,8 @@ namespace DayMemory.VideoConverter
 
             var blobContainerClient = new BlobContainerClient(storageConnectionString, inputParams.ContainerName);
 
+
+
             BlobClient inputBlob = blobContainerClient.GetBlobClient($"{inputParams.UserId}/{inputParams.FileId}/{inputParams.InputFileName}");
             BlobClient outputBlob = blobContainerClient.GetBlobClient($"{inputParams.UserId}/{inputParams.FileId}/{inputParams.OutputFileName}");
             using (var fileStream = System.IO.File.Create(inputFilePath))
@@ -106,7 +145,7 @@ namespace DayMemory.VideoConverter
             log.LogInformation($"File convertion started");
             //var conversion = await FFmpeg.Conversions.FromSnippet.ToMp4(inputFilePath, outputFilePath);
             var conversion = await FFmpeg.Conversions.FromSnippet.ChangeSize(inputFilePath, outputFilePath, VideoSize.Hd720);
-            
+
             await conversion.Start();
             log.LogInformation($"File convertion finished");
 
@@ -117,7 +156,7 @@ namespace DayMemory.VideoConverter
             }
             log.LogInformation($"Converted File uploaded to storage");
 
-            log.LogInformation($"Video Procession has been finished for: '{inputParams.FileId}'");
+            log.LogInformation($"Video processing has been finished for: '{inputParams.FileId}'");
             return new OkObjectResult("ok");
         }
     }
