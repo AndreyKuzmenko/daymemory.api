@@ -97,6 +97,10 @@ namespace DayMemory.VideoConverter
                     }
                 }
             }
+            else
+            {
+                log.LogInformation($"ffmpeg.exe already present");
+            }
 
             var ffprobeExeFilePath = Path.Combine(exeFolder, $"ffprobe.exe");
             if (!System.IO.File.Exists(ffprobeExeFilePath))
@@ -110,6 +114,10 @@ namespace DayMemory.VideoConverter
                         throw new InvalidOperationException("Can't download ffprobe.exe");
                     }
                 }
+            }
+            else
+            {
+                log.LogInformation($"ffprobe.exe already present");
             }
 
             log.LogInformation($"Converter loaded");

@@ -26,7 +26,7 @@ namespace DayMemory.DAL.QueryHandlers.Notes
         {
             var originalFileUrlTemplate = _urlResolver.GetOriginalFileUrlTemplate(request.UserId!);
             var resizedFileUrlTemplate = _urlResolver.GetResizedFileUrlTemplate(request.UserId!);
-            
+
             var query = _readDbContext.GetQuery<NoteItem>()
                 .Include(i => i.Location)
                 .Include(i => i.Files)
@@ -58,7 +58,7 @@ namespace DayMemory.DAL.QueryHandlers.Notes
                              Id = i.File!.Id,
                              Name = i.File.FileName,
                              OriginalUrl = string.Format(originalFileUrlTemplate, i.File.Id),
-                             ResizedUrl = string.Format(resizedFileUrlTemplate, i.File.Id),
+                             ResizedUrl = string.Format(i.File.FileType == FileType.Video ? originalFileUrlTemplate : resizedFileUrlTemplate, i.File.Id),
                              FileSize = i.File.FileSize,
                              FileType = i.File.FileType,
                              Width = i.File.Width,

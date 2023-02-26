@@ -17,6 +17,8 @@ using SkiaSharp;
 using static System.Net.WebRequestMethods;
 using static System.Net.Mime.MediaTypeNames;
 using System.Drawing;
+using DayMemory.Console;
+using System.Net.Http.Json;
 
 var builder = new ConfigurationBuilder()
  .AddJsonFile($"appsettings.Development.json", true, true);
@@ -33,10 +35,40 @@ var dbContext = new DayMemoryDbContext(optionsBuilder.Options);
 
 //await CleanFiles(storageConnectionString, destContainerName, dbContext);
 //await ResizeImages(storageConnectionString, destContainerName, dbContext);
+await ConvertVideos(storageConnectionString, destContainerName, dbContext);
 
 Console.WriteLine("End");
 
+async Task ConvertVideos(string? storageConnectionString, string? containerName, DayMemoryDbContext dbContext)
+{
+    var users = await dbContext.Set<User>().ToListAsync();
+    var tasks = new List<Task>();
+    foreach (var user in users)
+    {
+        var files = await dbContext.Set<File>().Where(x => x.UserId == user.Id).ToListAsync();
+        foreach (var item in files.Where(x => x.FileType == FileType.Video).Take(10))
+        {
+            var videoParams = new VideoConverterParams()
+            {
+                ContainerName = containerName!,
+                FileId = item.Id,
+                ConverterContainerName = "video-converter",
+                InputFileName = "original",
+                OutputFileName = "resized",
+                UserId = user.Id
+            };
 
+            var client = new HttpClient();
+            client.Timeout = new TimeSpan(1, 0, 0);
+            var task = client.PostAsJsonAsync("https://day-memory-vc.azurewebsites.net/api/ConvertVideo", videoParams);
+            tasks.Add(task);
+            //Console.WriteLine(await res.Content.ReadAsStringAsync());
+
+        }
+    }
+
+    Task.WaitAll(tasks.ToArray());
+}
 
 async Task ResizeImages(string? storageConnectionString, string? containerName, DayMemoryDbContext dbContext)
 {

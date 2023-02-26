@@ -39,7 +39,7 @@ namespace DayMemory.DAL.QueryHandlers.Files
                 Id = file.Id,
                 FileSize = file.FileSize,
                 OriginalUrl = string.Format(originalFileUrlTemplate, file.Id),
-                ResizedUrl = string.Format(resizedFileUrlTemplate, file.Id),
+                ResizedUrl = string.Format(file.FileType == FileType.Video ? originalFileUrlTemplate : resizedFileUrlTemplate, file.Id),
                 FileType = file.FileType,
                 Name = file.FileName,
                 Width = file.Width,
