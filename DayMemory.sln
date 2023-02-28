@@ -9,9 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DayMemory.Core", "DayMemory
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DayMemory.DAL", "DayMemory.DAL\DayMemory.DAL.csproj", "{A31F2BE6-2CE4-44AC-9246-12A878829BE3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DayMemory.VideoConverter", "DayMemory.VideoConverter\DayMemory.VideoConverter.csproj", "{51F0D19D-8026-4E43-A3FB-40B31C243CD6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DayMemory.Console", "DayMemory.Console\DayMemory.Console.csproj", "{DED94AD6-15AC-4A3E-A365-69DE04973B59}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DayMemory.Console", "DayMemory.Console\DayMemory.Console.csproj", "{DED94AD6-15AC-4A3E-A365-69DE04973B59}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,10 +29,6 @@ Global
 		{A31F2BE6-2CE4-44AC-9246-12A878829BE3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A31F2BE6-2CE4-44AC-9246-12A878829BE3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A31F2BE6-2CE4-44AC-9246-12A878829BE3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{51F0D19D-8026-4E43-A3FB-40B31C243CD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{51F0D19D-8026-4E43-A3FB-40B31C243CD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{51F0D19D-8026-4E43-A3FB-40B31C243CD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{51F0D19D-8026-4E43-A3FB-40B31C243CD6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DED94AD6-15AC-4A3E-A365-69DE04973B59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DED94AD6-15AC-4A3E-A365-69DE04973B59}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DED94AD6-15AC-4A3E-A365-69DE04973B59}.Release|Any CPU.ActiveCfg = Release|Any CPU
