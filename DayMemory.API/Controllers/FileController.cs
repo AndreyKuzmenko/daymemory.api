@@ -42,6 +42,15 @@ namespace DayMemory.API.Controllers
             return Ok();
         }
 
+        [Route("api/files/{fileId}")]
+        [HttpGet]
+        public async Task<ActionResult> GetFile([FromRoute] string fileId, CancellationToken ct)
+        {
+            var query = new GetFileQuery { FileId = fileId, UserId = User.Identity!.Name! };
+            var result = await _mediator.Send(query, ct);
+            return Ok(result);
+        }
+
         [HttpPost]
         [Route("api/files/media/{fileId}")]
         public async Task<ActionResult> UploadMedia([FromRoute] string fileId, [FromForm] int width, [FromForm] int height, [FromForm] FileType fileType, [FromForm] IFormFile? file, CancellationToken ct)
