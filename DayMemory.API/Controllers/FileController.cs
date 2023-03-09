@@ -53,21 +53,28 @@ namespace DayMemory.API.Controllers
 
         [HttpPost]
         [Route("api/files/media")]
-        public async Task<ActionResult> UploadMedia([FromForm] CreateMediaFileCommand command, [FromForm] IFormFile file, CancellationToken ct)
+        public async Task<ActionResult> UploadMedia([FromForm] string fileId, [FromForm] int width, [FromForm] int height, [FromForm] FileType fileType, [FromForm] IFormFile? file, CancellationToken ct)
         {
-            if (!ModelState.IsValid)
+            if (file == null)
             {
                 return BadRequest();
             }
 
-            if (command.FileType == FileType.Unknown)
+            if (fileType == FileType.Unknown)
             {
                 return BadRequest("File type is unknown.");
             }
-
+            
             var userId = User.Identity!.Name!;
-            command.UserId = userId;
-            command.FormFile = file;
+            var command = new CreateMediaFileCommand()
+            {
+                FormFile = file,
+                FileId = fileId,
+                FileType = fileType,
+                Width = width,
+                Height = height,
+                UserId = userId
+            };
 
             var id = await _mediator.Send(command, ct);
             var query = new GetFileQuery { FileId = id, UserId = User.Identity!.Name! };
