@@ -25,7 +25,7 @@ namespace DayMemory.DAL.QueryHandlers.Notes
         {
             var originalFileUrlTemplate = _urlResolver.GetOriginalFileUrlTemplate(request.UserId!);
             var resizedFileUrlTemplate = _urlResolver.GetResizedFileUrlTemplate(request.UserId!);
-            
+
             var query = _readDbContext.GetQuery<NoteItem>()
                 .Include(i => i.Location)
                 .Include(i => i.Files)
@@ -34,7 +34,12 @@ namespace DayMemory.DAL.QueryHandlers.Notes
 
             if (!string.IsNullOrEmpty(request.Tag))
             {
-                query = query.Where(x => x.Text != null && x.Text.Contains("#" + request.Tag));
+                query = query.Where(x => x.Text != null && x.Text.Contains("#" + request.Tag, StringComparison.InvariantCultureIgnoreCase));
+            }
+
+            if (!string.IsNullOrEmpty(request.NotebookId))
+            {
+                query = query.Where(x => x.NotebookId!.Equals(request.NotebookId, StringComparison.InvariantCultureIgnoreCase));
             }
 
             DateTimeOffset? lastItemDateTime = request.LastItemDateTime.HasValue ? DateTimeOffset.FromUnixTimeMilliseconds(request.LastItemDateTime.Value) : null;

@@ -13,6 +13,8 @@ namespace DayMemory.Core.Queries
 
         public string? Tag { get; set; }
 
+        public string? NotebookId { get; set; }
+
         [JsonIgnore]
         public string? UserId { get; set; }
     }
