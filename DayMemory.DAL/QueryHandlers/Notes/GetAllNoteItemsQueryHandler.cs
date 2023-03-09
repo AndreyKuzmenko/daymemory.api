@@ -39,7 +39,7 @@ namespace DayMemory.DAL.QueryHandlers.Notes
 
             if (!string.IsNullOrEmpty(request.NotebookId))
             {
-                query = query.Where(x => x.NotebookId == request.NotebookId));
+                query = query.Where(x => x.NotebookId == request.NotebookId);
             }
 
             DateTimeOffset? lastItemDateTime = request.LastItemDateTime.HasValue ? DateTimeOffset.FromUnixTimeMilliseconds(request.LastItemDateTime.Value) : null;
