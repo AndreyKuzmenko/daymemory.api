@@ -34,12 +34,12 @@ namespace DayMemory.DAL.QueryHandlers.Notes
 
             if (!string.IsNullOrEmpty(request.Tag))
             {
-                query = query.Where(x => x.Text != null && x.Text.Contains("#" + request.Tag, StringComparison.InvariantCultureIgnoreCase));
+                query = query.Where(x => x.Text != null && x.Text.Contains("#" + request.Tag));
             }
 
             if (!string.IsNullOrEmpty(request.NotebookId))
             {
-                query = query.Where(x => string.Equals(x.NotebookId!, request.NotebookId, StringComparison.InvariantCultureIgnoreCase));
+                query = query.Where(x => x.NotebookId == request.NotebookId));
             }
 
             DateTimeOffset? lastItemDateTime = request.LastItemDateTime.HasValue ? DateTimeOffset.FromUnixTimeMilliseconds(request.LastItemDateTime.Value) : null;
