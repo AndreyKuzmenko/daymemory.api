@@ -9,18 +9,6 @@ namespace DayMemory.API.Components
 
     public class ErrorHandlerMiddleware
     {
-        class ErrorDto
-        {
-            public ErrorDto(string message, int? code = null)
-            {
-                Message = message;
-                Code = code;
-            }
-            public string Message { get; set; }
-
-            public int? Code { get; set; }
-        }
-
         private readonly RequestDelegate _next;
 
         public ErrorHandlerMiddleware(RequestDelegate next)

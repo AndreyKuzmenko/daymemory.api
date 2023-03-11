@@ -21,6 +21,31 @@ using DayMemory.Core.Models.Personal;
 
 namespace DayMemory.Web.Areas.Mobile
 {
+    public enum AccountErrorCode
+    {
+        ValidationFailed = 101,
+
+        UserIsNotFound = 101,
+
+        PasswordsDontMatch = 102,
+
+        InvalidRestorePasswordToken = 103,
+
+        UserUpdateFailed = 104,
+
+        UserCreationFailed = 105,
+
+        PasswordChangeFailed = 106,
+
+        InvalidEmailOrPassword = 107,
+
+        UserAlreadyExists = 108,
+
+        EmailIsRequired = 109,
+
+        InvalidAccessOrRefreshToken = 110
+    }
+
     [ApiController]
     public class AccountController : ControllerBase
     {
@@ -28,30 +53,20 @@ namespace DayMemory.Web.Areas.Mobile
         private readonly ILogger<AccountController> _logger;
         private readonly IJwTokenHelper _jwTokenHelper;
         private readonly IEmailSender _emailSender;
-        private readonly IConfiguration _configuration;
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UrlSettings _urlSettings;
-        private readonly IMediator _mediator;
         private readonly IEmailTemplateGenerator _emailTemplateGenerator;
         private readonly IUserRepository _userRepository;
 
         public AccountController(UserManager<IdentityUser> userManager, ILogger<AccountController> logger,
-            IJwTokenHelper jwTokenHelper, IEmailSender emailSender, IConfiguration configuration, SignInManager<IdentityUser> signInManager, UrlSettings urlSettings,
-            IMediator mediator, IEmailTemplateGenerator emailTemplateGenerator, IUserRepository userRepository)
+            IJwTokenHelper jwTokenHelper, IEmailSender emailSender, IEmailTemplateGenerator emailTemplateGenerator, IUserRepository userRepository)
         {
 
             _logger = logger;
             _jwTokenHelper = jwTokenHelper;
             _emailSender = emailSender;
-            _configuration = configuration;
-            _signInManager = signInManager;
-            _urlSettings = urlSettings;
-            _mediator = mediator;
             _emailTemplateGenerator = emailTemplateGenerator;
             this._userRepository = userRepository;
             _userManager = userManager;
         }
-
 
         [HttpPost]
         [Route("api/account/change-password")]
@@ -59,24 +74,26 @@ namespace DayMemory.Web.Areas.Mobile
         public async Task<ActionResult> ChangePassword(ChangePasswordInputModel model)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            {
+                return BadRequest(new ErrorDto("Input validation failed", (int)AccountErrorCode.ValidationFailed, ModelState));
+            }
 
             if (model.NewPassword != model.ConfirmationPassword)
             {
-                return BadRequest("Password confirmation does not match with the Password");
+                return BadRequest(new ErrorDto("Password and Confirm password don't match", (int)AccountErrorCode.PasswordsDontMatch));
             }
 
             var userId = User.Identity!.Name!;
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
             {
-                return BadRequest();
+                return BadRequest(new ErrorDto("Can't find a user with the specified e-mail", (int)AccountErrorCode.UserIsNotFound));
             }
 
             var passChangeResult = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.ConfirmationPassword);
             if (!passChangeResult.Succeeded)
             {
-                return BadRequest(passChangeResult.Errors);
+                return BadRequest(new ErrorDto("Can't change password", (int)AccountErrorCode.PasswordChangeFailed, passChangeResult.Errors));
             }
 
             return Ok();
@@ -88,13 +105,15 @@ namespace DayMemory.Web.Areas.Mobile
         public async Task<ActionResult> EnableEncryption(EnableEncryptionInputModel model)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            {
+                return BadRequest(new ErrorDto("Input validation failed", (int)AccountErrorCode.ValidationFailed, ModelState));
+            }
 
             var userId = User.Identity!.Name!;
             var user = await _userManager.FindByIdAsync(userId) as User;
             if (user == null)
             {
-                return BadRequest();
+                return BadRequest(new ErrorDto("Can't find a user with the specified e-mail", (int)AccountErrorCode.UserIsNotFound));
             }
 
             user.IsEncryptionEnabled = true;
@@ -102,7 +121,7 @@ namespace DayMemory.Web.Areas.Mobile
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
             {
-                return BadRequest(result.Errors);
+                return BadRequest(new ErrorDto("Can't update the user data", (int)AccountErrorCode.InvalidRestorePasswordToken, result.Errors));
             }
 
             return Ok();
@@ -113,18 +132,20 @@ namespace DayMemory.Web.Areas.Mobile
         public async Task<ActionResult> RestorePassword(RestorePasswordInputModel model, CancellationToken ct)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            {
+                return BadRequest(new ErrorDto("Input validation failed", (int)AccountErrorCode.ValidationFailed, ModelState));
+            }
 
             var user = await _userManager.FindByEmailAsync(model.Email) as User;
             if (user == null)
             {
-                return BadRequest("No user with the specified e-mail found!");
+                return BadRequest(new ErrorDto("Can't find a user with the specified e-mail", (int)AccountErrorCode.UserIsNotFound));
             }
 
             var tokenVerificationRes = await _userManager.VerifyUserTokenAsync(user, TokenOptions.DefaultPhoneProvider, "ResetPasswordPurpose", model.Token);
             if (!tokenVerificationRes)
             {
-                return BadRequest("Invalid Token");
+                return BadRequest(new ErrorDto("Invalid Token", (int)AccountErrorCode.InvalidRestorePasswordToken));
             }
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
@@ -143,12 +164,14 @@ namespace DayMemory.Web.Areas.Mobile
         public async Task<ActionResult> ForgotPassword(ForgotPasswordInputModel model)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            {
+                return BadRequest(new ErrorDto("Input validation failed", (int)AccountErrorCode.ValidationFailed, ModelState));
+            }
 
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
             {
-                return BadRequest();
+                return BadRequest(new ErrorDto("Can't find a user with the specified e-mail", (int)AccountErrorCode.UserIsNotFound));
             }
 
             var token = await _userManager.GenerateUserTokenAsync(user, TokenOptions.DefaultPhoneProvider, "ResetPasswordPurpose");
@@ -170,17 +193,19 @@ namespace DayMemory.Web.Areas.Mobile
         public async Task<ActionResult> Login(LoginInputModel model, CancellationToken ct)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            {
+                return BadRequest(new ErrorDto("Input validation failed", (int)AccountErrorCode.ValidationFailed, ModelState));
+            }
 
             var user = await _userManager.FindByEmailAsync(model.Email) as User;
             if (user == null)
             {
-                return BadRequest("Invalid e-mail or password");
+                return BadRequest(new ErrorDto("Invalid e-mail or password", (int)AccountErrorCode.InvalidEmailOrPassword));
             }
 
             if (!await _userManager.CheckPasswordAsync(user, model.Password))
             {
-                return BadRequest("Invalid e-mail or password");
+                return BadRequest(new ErrorDto("Invalid e-mail or password", (int)AccountErrorCode.InvalidEmailOrPassword));
             }
 
             var tokenResult = await ConfigureToken(user, ct);
@@ -210,12 +235,14 @@ namespace DayMemory.Web.Areas.Mobile
         public async Task<ActionResult<AccountModel>> CheckEmail(CheckEmailInputModel model)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            {
+                return BadRequest(new ErrorDto("Input validation failed", (int)AccountErrorCode.ValidationFailed, ModelState));
+            }
 
             var user = await _userManager.FindByEmailAsync(model.Email) as User;
             if (user != null)
             {
-                return BadRequest("User with such e-mail already exists");
+                return BadRequest(new ErrorDto("User with such e-mail already exists", (int)AccountErrorCode.UserAlreadyExists));
             }
 
             return Ok();
@@ -226,13 +253,14 @@ namespace DayMemory.Web.Areas.Mobile
         public async Task<ActionResult<AccountModel>> Signup(SignupInputModel model, CancellationToken ct)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            {
+                return BadRequest(new ErrorDto("Input validation failed", (int)AccountErrorCode.ValidationFailed, ModelState));
+            }
 
             var user = await _userManager.FindByEmailAsync(model.Email) as User;
             if (user != null)
             {
-                ModelState.AddModelError("Email", "User with such e-mail already exists");
-                return BadRequest(ModelState);
+                return BadRequest(new ErrorDto("User with such e-mail already exists", (int)AccountErrorCode.UserAlreadyExists));
             }
 
             user = new User { UserName = model.Email, Email = model.Email, FirstName = model.FirstName, LastName = model.LastName };
@@ -240,12 +268,12 @@ namespace DayMemory.Web.Areas.Mobile
 
             if (!result.Succeeded)
             {
-                return BadRequest(ModelState);
+                return BadRequest(new ErrorDto("User creation failed", (int)AccountErrorCode.UserCreationFailed));
             }
             user = await _userManager.FindByEmailAsync(model.Email) as User;
             if (user == null)
             {
-                return BadRequest();
+                return BadRequest(new ErrorDto("Can't find a user with the specified e-mail", (int)AccountErrorCode.UserIsNotFound));
             }
             //await _mediator.Publish(new UserCreatedNotification() { UserId = user!.Id });
 
@@ -258,7 +286,9 @@ namespace DayMemory.Web.Areas.Mobile
         public async Task<ActionResult> SocialSignup(SocialSignupInputModel model, CancellationToken ct)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            {
+                return BadRequest(new ErrorDto("Input validation failed", (int)AccountErrorCode.ValidationFailed, ModelState));
+            }
 
             var user = await _userManager.FindByLoginAsync(model.ProviderType, model.Id) as User;
             if (user != null)
@@ -269,16 +299,8 @@ namespace DayMemory.Web.Areas.Mobile
 
             if (string.IsNullOrEmpty(model.Email))
             {
-                ModelState.AddModelError("Email", "E-mail is required");
+                return BadRequest(new ErrorDto("E-mail is required", (int)AccountErrorCode.EmailIsRequired));
             }
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            string jsonString = JsonSerializer.Serialize(model);
-            _logger.LogInformation("User signup", jsonString);
 
             user = await _userManager.FindByEmailAsync(model.Email) as User;
             if (user == null)
@@ -294,11 +316,11 @@ namespace DayMemory.Web.Areas.Mobile
                 var result = await _userManager.CreateAsync(user);
                 if (!result.Succeeded)
                 {
-                    _logger.LogError("Failed to create account");
-                    return BadRequest(ModelState);
+                    _logger.LogError("Failed to create an account");
+                    return BadRequest(new ErrorDto("User creation failed", (int)AccountErrorCode.UserCreationFailed, result.Errors));
                 }
             }
-            //await _mediator.Publish(new UserCreatedNotification() { UserId = user.Id });
+
             await _userManager.AddLoginAsync(user, new UserLoginInfo(model.ProviderType, model.Id, model.FirstName + model.LastName));
             var tokenResult = await ConfigureToken(user, ct);
             return Ok(tokenResult);
@@ -309,13 +331,14 @@ namespace DayMemory.Web.Areas.Mobile
         public async Task<IActionResult> RefreshToken(TokenModel tokenModel, CancellationToken ct)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
+            {
+                return BadRequest(new ErrorDto("Input validation failed", (int)AccountErrorCode.ValidationFailed, ModelState));
+            }
 
             var principal = _jwTokenHelper.GetPrincipalFromExpiredToken(tokenModel.AccessToken);
             if (principal == null)
             {
-                return BadRequest("Invalid access token or refresh token");
+                return BadRequest(new ErrorDto("Invalid access token or refresh token", (int)AccountErrorCode.InvalidAccessOrRefreshToken));
             }
 
             string userId = principal!.Identity!.Name!;
@@ -323,13 +346,13 @@ namespace DayMemory.Web.Areas.Mobile
             var user = await _userManager.FindByIdAsync(userId) as User;
             if (user == null)
             {
-                return BadRequest("Invalid access token or refresh token");
+                return BadRequest(new ErrorDto("Invalid access token or refresh token", (int)AccountErrorCode.InvalidAccessOrRefreshToken));
             }
 
             var userToken = await _userRepository.GetTokenAsync(tokenModel.RefreshToken, user.Id, ct);
             if (userToken == null || userToken.RefreshToken != tokenModel.RefreshToken)
             {
-                return BadRequest("Invalid access token or refresh token");
+                return BadRequest(new ErrorDto("Invalid access token or refresh token", (int)AccountErrorCode.InvalidAccessOrRefreshToken));
             }
 
             var newAccessToken = await _jwTokenHelper.GenerateAccessToken(user);
