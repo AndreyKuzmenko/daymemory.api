@@ -23,7 +23,7 @@ namespace DayMemory.Web.Areas.Mobile
 {
     public enum AccountErrorCode
     {
-        ValidationFailed = 101,
+        ValidationFailed = 100,
 
         UserIsNotFound = 101,
 
