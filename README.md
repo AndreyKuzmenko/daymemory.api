@@ -1,4 +1,10 @@
-# Day Memory Api Project
+# Day Memory API
+Day Memory is a note taking app that preserves your memories.
+### Mobile and Desktop Clients
+There is a separate project built in Flutter https://github.com/AndreyKuzmenko/daymemory.mobile
+
+## TODO
+Add instructions on how to set up the project
 
 Start by configuring the appsettings.
 1. Azure storage
