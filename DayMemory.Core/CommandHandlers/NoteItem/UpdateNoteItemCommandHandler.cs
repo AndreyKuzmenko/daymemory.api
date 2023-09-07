@@ -51,7 +51,6 @@ namespace DayMemory.Core.CommandHandlers
             note.NotebookId = request.NotebookId;
             note.Date = DateTimeOffset.FromUnixTimeMilliseconds(request.Date);
             note.IsEncrypted = request.IsEncrypted;
-            note.IsFavorited = request.IsFavorited;
             note.ModifiedDate = _clock.UtcNow;
             await _noteItemRepository.UpdateAsync(note, cancellationToken);
         }

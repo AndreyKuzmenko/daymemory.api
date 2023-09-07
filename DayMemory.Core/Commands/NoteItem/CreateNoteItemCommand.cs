@@ -32,7 +32,5 @@ namespace DayMemory.Core.Commands
         public string[] MediaFiles { get; set; } = Array.Empty<string>();
 
         public LocationCommandDto? Location { get; set; }
-
-        public bool IsFavorited { get; set; }
     }
 }

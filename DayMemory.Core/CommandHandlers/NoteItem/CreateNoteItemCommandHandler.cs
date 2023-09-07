@@ -47,7 +47,6 @@ namespace DayMemory.Core.CommandHandlers
                 Text = request.Text ?? "",
                 Date = DateTimeOffset.FromUnixTimeMilliseconds(request.Date),
                 IsEncrypted = request.IsEncrypted,
-                IsFavorited = request.IsFavorited,
                 CreatedDate = _clock.UtcNow,
                 ModifiedDate = _clock.UtcNow,
             };
