@@ -33,5 +33,6 @@ namespace DayMemory.Core.Commands
 
         public LocationCommandDto? Location { get; set; }
 
+        public bool IsFavorited { get; set; }
     }
 }

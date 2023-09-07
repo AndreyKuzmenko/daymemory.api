@@ -65,6 +65,7 @@ namespace DayMemory.DAL.QueryHandlers.Notes
                      Text = entity.Text,
                      ModifiedDate = entity.ModifiedDate.ToUnixTimeMilliseconds(),
                      IsEncrypted = entity.IsEncrypted,
+                     IsFavorited = entity.IsFavorited,
                      Date = entity.Date.ToUnixTimeMilliseconds(),
                      MediaFiles = entity.Files.Where(x => x.File!.FileType == FileType.Image).OrderBy(x => x.OrderRank)
                      .ThenBy(x => x.File!.CreatedDate).Select(i => new FileProjection
