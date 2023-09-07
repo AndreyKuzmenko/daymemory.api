@@ -53,6 +53,13 @@ namespace DayMemory.DAL.QueryHandlers.Notes
                          ModifiedDate = entity.ModifiedDate.ToUnixTimeMilliseconds(),
                          Date = entity.Date.ToUnixTimeMilliseconds(),
                          IsEncrypted = entity.IsEncrypted,
+                         Tags = entity.Tags.Select(x => new TagProjection
+                         {
+                             Id = x.Tag!.Id,
+                             Text = x.Tag!.Text,
+                             OrderRank = x.Tag.OrderRank,
+                             ModifiedDate = x.Tag.ModifiedDate.ToUnixTimeMilliseconds(),
+                         }).ToList(),
                          MediaFiles = entity.Files.OrderBy(x => x.OrderRank).ThenBy(x => x.File!.CreatedDate).Select(i => new FileProjection
                          {
                              Id = i.File!.Id,

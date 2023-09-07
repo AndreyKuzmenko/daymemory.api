@@ -31,6 +31,8 @@ namespace DayMemory.Core.Commands
 
         public string[] MediaFiles { get; set; } = Array.Empty<string>();
 
+        public string[] Tags { get; set; } = Array.Empty<string>();
+
         public LocationCommandDto? Location { get; set; }
     }
 }

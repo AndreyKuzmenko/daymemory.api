@@ -53,6 +53,7 @@ namespace DayMemory.Core.CommandHandlers
 
 
             item.SetFiles(request.MediaFiles ?? new string[] { });
+            item.SetTags(request.Tags ?? new string[] { });
 
             await _noteItemRepository.CreateAsync(item, cancellationToken);
 

@@ -19,6 +19,8 @@ namespace DayMemory.Core.Queries.Projections
 
         public List<FileProjection>? MediaFiles { get; set; }
 
+        public List<TagProjection>? Tags { get; set; }
+
         public virtual LocationProjection? Location { get; set; }
     }
 }

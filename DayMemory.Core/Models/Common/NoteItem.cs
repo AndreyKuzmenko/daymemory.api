@@ -19,6 +19,8 @@ namespace DayMemory.Core.Models.Personal
 
         public virtual List<NoteFile> Files { get; set; } = new List<NoteFile>();
 
+        public virtual List<NoteTag> Tags { get; set; } = new List<NoteTag>();
+
         public string? UserId { get; set; }
 
         public virtual User? User { get; set; }
@@ -26,6 +28,23 @@ namespace DayMemory.Core.Models.Personal
         public bool IsDeleted { get; set; }
 
         public bool IsEncrypted { get; set; }
+
+        public void SetTags(string[] tagIds)
+        {
+            Tags.Clear();
+            foreach (var tagId in tagIds)
+            {
+                var dt = new NoteTag
+                {
+                    Id = StringUtils.GenerateUniqueString(),
+                    TagId = tagId,
+                    NoteItemId = Id,
+                    CreatedDate = DateTimeOffset.UtcNow,
+                    ModifiedDate = DateTimeOffset.UtcNow,
+                };
+                Tags.Add(dt);
+            }
+        }
 
         public void SetFiles(string[] fileIds)
         {

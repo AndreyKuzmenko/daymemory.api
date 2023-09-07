@@ -15,6 +15,9 @@ namespace DayMemory.Core.Commands
 
         public string[] MediaFiles { get; set; } = new string[] { };
 
+        public string[] Tags { get; set; } = Array.Empty<string>();
+
+
         public long Date { get; set; }
 
         public bool IsEncrypted { get; set; }
