@@ -70,6 +70,7 @@ namespace DayMemory.DAL.QueryHandlers.Notes
                      {
                          Id = x.Tag!.Id,
                          ModifiedDate = x.Tag!.ModifiedDate.ToUnixTimeMilliseconds(),
+                         IsEncrypted = x.Tag!.IsEncrypted,
                          OrderRank = x.Tag!.OrderRank,
                          Text = x.Tag!.Text,
                      }).ToList(),

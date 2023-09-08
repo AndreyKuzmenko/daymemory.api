@@ -58,6 +58,7 @@ namespace DayMemory.DAL.QueryHandlers.Notes
                              Id = x.Tag!.Id,
                              Text = x.Tag!.Text,
                              OrderRank = x.Tag.OrderRank,
+                             IsEncrypted = x.Tag!.IsEncrypted,
                              ModifiedDate = x.Tag.ModifiedDate.ToUnixTimeMilliseconds(),
                          }).ToList(),
                          MediaFiles = entity.Files.OrderBy(x => x.OrderRank).ThenBy(x => x.File!.CreatedDate).Select(i => new FileProjection
