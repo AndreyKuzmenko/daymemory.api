@@ -11,6 +11,8 @@ namespace DayMemory.Core.Commands
 
         public required string Text { get; set; }
 
+        public bool IsEncrypted { get; set; }
+
         [JsonIgnore]
         public string? UserId { get; set; }
 

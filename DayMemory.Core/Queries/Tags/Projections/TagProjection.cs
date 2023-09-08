@@ -6,6 +6,8 @@
 
         public required string Text { get; set; }
 
+        public bool IsEncrypted { get; set; }
+
         public int OrderRank { get; set; }
 
         public required long ModifiedDate { get; set; }

@@ -23,7 +23,8 @@ namespace DayMemory.Core.CommandHandlers
             var item = new Tag()
             {
                 Id = request.TagId,
-                UserId = request.UserId,
+                UserId = request.UserId!,
+                IsEncrypted = request.IsEncrypted,
                 Text = request.Text,
                 OrderRank = request.OrderRank,
                 CreatedDate = _clock.UtcNow,

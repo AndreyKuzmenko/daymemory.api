@@ -27,6 +27,7 @@ namespace DayMemory.DAL.QueryHandlers.Tags
                         Id = t.Id,
                         Text = t.Text,
                         OrderRank = t.OrderRank,
+                        IsEncrypted = t.IsEncrypted,
                         ModifiedDate = t.ModifiedDate.ToUnixTimeMilliseconds()
                     })
                     .ToListAsync(cancellationToken);

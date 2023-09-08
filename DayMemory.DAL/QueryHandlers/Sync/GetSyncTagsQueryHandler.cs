@@ -41,6 +41,7 @@ namespace DayMemory.DAL.QueryHandlers.Notes
                          Id = entity.Id,
                          Text = entity.Text,
                          OrderRank = entity.OrderRank,
+                         IsEncrypted = entity.IsEncrypted,
                          ModifiedDate = entity.ModifiedDate.ToUnixTimeMilliseconds(),
                      }
                  });

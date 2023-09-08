@@ -28,6 +28,7 @@ namespace DayMemory.Core.CommandHandlers
             item.Text = request.Text;
             item.OrderRank = request.OrderRank;
             item.ModifiedDate = _clock.UtcNow;
+            item.IsEncrypted = request.IsEncrypted;
             await _tagRepository.UpdateAsync(item, cancellationToken);
         }
     }
