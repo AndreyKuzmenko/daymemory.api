@@ -27,13 +27,14 @@ using DayMemory.Core.Services.Interfaces;
 using Google.Api;
 using Hangfire;
 using Hangfire.SqlServer;
+using X.Extensions.Logging.Telegram;
 
 string CorsPolicyName = "DayMemoryCorsPolicy";
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddApplicationInsightsTelemetry();
+
 builder.Services.AddControllers(options =>
 {
     //options.ModelValidatorProviders.Clear();
@@ -209,6 +210,8 @@ builder.Services.AddAuthorization(o =>
     });
 });
 
+builder.Services.AddApplicationInsightsTelemetry();
+builder.Logging.AddTelegram(builder.Configuration);
 
 var app = builder.Build();
 
@@ -246,6 +249,11 @@ app.MapControllers();
 app.UseHangfireDashboard("/hangfire", new DashboardOptions
 {
     //Authorization = new[] { new AdminAuthorizationFilter() }
+});
+
+app.MapGet("/", async context =>
+{
+    await context.Response.WriteAsync("OK");
 });
 
 app.MapGet("/env", async context =>
@@ -286,6 +294,12 @@ app.MapGet("/conf", async context =>
 
 app.MapGet("/api/keep-alive", async context =>
 {
+    await context.Response.WriteAsync("OK");
+});
+
+app.MapGet("/api/logging", async context =>
+{
+    app.Logger.LogError("Error test");
     await context.Response.WriteAsync("OK");
 });
 
