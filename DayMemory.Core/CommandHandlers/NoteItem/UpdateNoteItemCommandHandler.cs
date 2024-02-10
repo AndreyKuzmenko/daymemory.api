@@ -8,7 +8,7 @@ using Microsoft.Extensions.Internal;
 
 namespace DayMemory.Core.CommandHandlers
 {
-    internal class UpdateNoteItemCommandHandler : AsyncRequestHandler<UpdateNoteItemCommand>
+    internal class UpdateNoteItemCommandHandler : IRequestHandler<UpdateNoteItemCommand>
     {
         private readonly INoteItemRepository _noteItemRepository;
         private readonly ILocationRepository _locationRepository;
@@ -21,7 +21,7 @@ namespace DayMemory.Core.CommandHandlers
             _clock = clock;
         }
 
-        protected override async Task Handle(UpdateNoteItemCommand request, CancellationToken cancellationToken)
+        public async Task Handle(UpdateNoteItemCommand request, CancellationToken cancellationToken)
         {
             var note = await _noteItemRepository.LoadByIdAsync(request.NoteId!, cancellationToken);
             if (note == null || note.UserId != request.UserId)

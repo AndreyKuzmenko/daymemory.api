@@ -9,7 +9,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace DayMemory.Core.CommandHandlers
 {
-    internal class UpdateQuestionListOrderRanksCommandHandler : AsyncRequestHandler<UpdateQuestionListOrderRanksCommand>
+    internal class UpdateQuestionListOrderRanksCommandHandler : IRequestHandler<UpdateQuestionListOrderRanksCommand>
     {
         private readonly IQuestionListRepository _questionListRepository;
         private readonly ISystemClock _clock;
@@ -20,7 +20,7 @@ namespace DayMemory.Core.CommandHandlers
             _clock = clock;
         }
 
-        protected override async Task Handle(UpdateQuestionListOrderRanksCommand request, CancellationToken cancellationToken)
+        public async Task Handle(UpdateQuestionListOrderRanksCommand request, CancellationToken cancellationToken)
         {
             foreach (var questionList in request.QuestionLists)
             {

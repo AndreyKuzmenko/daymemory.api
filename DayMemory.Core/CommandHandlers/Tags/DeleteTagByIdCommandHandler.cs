@@ -5,7 +5,7 @@ using Microsoft.Extensions.Internal;
 
 namespace DayMemory.Core.CommandHandlers
 {
-    public class DeleteTagByIdCommandHandler : IRequestHandler<DeleteTagCommand, Unit>
+    public class DeleteTagByIdCommandHandler : IRequestHandler<DeleteTagCommand>
     {
         private readonly ITagRepository _tagRepository;
         private readonly ISystemClock _clock;
@@ -16,7 +16,7 @@ namespace DayMemory.Core.CommandHandlers
             _clock = clock;
         }
 
-        public async Task<Unit> Handle(DeleteTagCommand request, CancellationToken cancellationToken)
+        public async Task Handle(DeleteTagCommand request, CancellationToken cancellationToken)
         {
             var item = await _tagRepository.LoadByIdAsync(request.TagId!, cancellationToken);
             if (item != null)
@@ -29,7 +29,6 @@ namespace DayMemory.Core.CommandHandlers
                 item.ModifiedDate = _clock.UtcNow;
                 await _tagRepository.UpdateAsync(item, cancellationToken);
             }
-            return Unit.Value;
         }
     }
 }

@@ -84,8 +84,8 @@ builder.Services.AddTransient<IImageService, ImageService>();
 
 
 // MEDIATR
-builder.Services.AddMediatR(typeof(DayMemory.Core.AssemblyInfo));
-builder.Services.AddMediatR(typeof(DayMemory.DAL.AssemblyInfo));
+builder.Services.AddMediatR(x => x.RegisterServicesFromAssembly(typeof(DayMemory.Core.AssemblyInfo).Assembly));
+builder.Services.AddMediatR(x => x.RegisterServicesFromAssembly(typeof(DayMemory.DAL.AssemblyInfo).Assembly));
 
 builder.Services.AddTransient<IEmailTemplateGenerator, EmailTemplateGenerator>();
 

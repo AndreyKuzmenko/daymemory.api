@@ -7,7 +7,7 @@ using Microsoft.Extensions.Internal;
 
 namespace DayMemory.Core.CommandHandlers
 {
-    internal class UpdateNotebookCommandHandler : AsyncRequestHandler<UpdateNotebookCommand>
+    internal class UpdateNotebookCommandHandler : IRequestHandler<UpdateNotebookCommand>
     {
         private readonly INotebookRepository _notebookRepository;
         private readonly ISystemClock _clock;
@@ -18,7 +18,7 @@ namespace DayMemory.Core.CommandHandlers
             _clock = clock;
         }
 
-        protected override async Task Handle(UpdateNotebookCommand request, CancellationToken cancellationToken)
+        public async Task Handle(UpdateNotebookCommand request, CancellationToken cancellationToken)
         {
             var item = await _notebookRepository.LoadByIdAsync(request.NotebookId!, cancellationToken);
             if (item == null || item.UserId != request.UserId)

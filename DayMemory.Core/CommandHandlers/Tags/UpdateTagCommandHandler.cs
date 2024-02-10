@@ -6,7 +6,7 @@ using Microsoft.Extensions.Internal;
 
 namespace DayMemory.Core.CommandHandlers
 {
-    internal class UpdateTagCommandHandler : AsyncRequestHandler<UpdateTagCommand>
+    internal class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand>
     {
         private readonly ITagRepository _tagRepository;
         private readonly ISystemClock _clock;
@@ -17,7 +17,7 @@ namespace DayMemory.Core.CommandHandlers
             _clock = clock;
         }
 
-        protected override async Task Handle(UpdateTagCommand request, CancellationToken cancellationToken)
+        public async Task Handle(UpdateTagCommand request, CancellationToken cancellationToken)
         {
             var item = await _tagRepository.LoadByIdAsync(request.TagId!, cancellationToken);
             if (item == null || item.UserId != request.UserId)

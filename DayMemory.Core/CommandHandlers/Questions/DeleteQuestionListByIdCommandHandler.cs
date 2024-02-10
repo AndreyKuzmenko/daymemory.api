@@ -4,7 +4,7 @@ using MediatR;
 
 namespace DayMemory.Core.CommandHandlers
 {
-    public class DeleteQuestionListByIdCommandHandler : IRequestHandler<DeleteQuestionListCommand, Unit>
+    public class DeleteQuestionListByIdCommandHandler : IRequestHandler<DeleteQuestionListCommand>
     {
         private readonly IQuestionListRepository _questionListRepository;
 
@@ -13,10 +13,9 @@ namespace DayMemory.Core.CommandHandlers
             this._questionListRepository = questionListRepository;
         }
 
-        public async Task<Unit> Handle(DeleteQuestionListCommand request, CancellationToken cancellationToken)
+        public async Task Handle(DeleteQuestionListCommand request, CancellationToken cancellationToken)
         {
             await _questionListRepository.DeleteByIdAsync(request.QuestionListId!);
-            return Unit.Value;
         }
     }
 }

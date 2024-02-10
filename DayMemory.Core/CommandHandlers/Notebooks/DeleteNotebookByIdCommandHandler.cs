@@ -5,7 +5,7 @@ using Microsoft.Extensions.Internal;
 
 namespace DayMemory.Core.CommandHandlers
 {
-    public class DeleteNotebookByIdCommandHandler : IRequestHandler<DeleteNotebookCommand, Unit>
+    public class DeleteNotebookByIdCommandHandler : IRequestHandler<DeleteNotebookCommand>
     {
         private readonly INotebookRepository _notebookRepository;
 
@@ -17,7 +17,7 @@ namespace DayMemory.Core.CommandHandlers
             _clock = clock;
         }
 
-        public async Task<Unit> Handle(DeleteNotebookCommand request, CancellationToken cancellationToken)
+        public async Task Handle(DeleteNotebookCommand request, CancellationToken cancellationToken)
         {
             var item = await _notebookRepository.LoadByIdAsync(request.NotebookId!, cancellationToken);
             if (item != null)
@@ -31,7 +31,6 @@ namespace DayMemory.Core.CommandHandlers
                 item.ModifiedDate = _clock.UtcNow;
                 await _notebookRepository.UpdateAsync(item, cancellationToken);
             }
-            return Unit.Value;
         }
     }
 }

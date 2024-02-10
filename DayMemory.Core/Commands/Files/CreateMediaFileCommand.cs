@@ -1,8 +1,6 @@
 ﻿using DayMemory.Core.Models.Personal;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
 
 namespace DayMemory.Core.Commands.Files
 {
