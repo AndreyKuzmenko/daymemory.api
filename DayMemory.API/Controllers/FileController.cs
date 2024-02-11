@@ -1,4 +1,5 @@
-﻿using DayMemory.Core.Commands.Files;
+﻿using DayMemory.Core;
+using DayMemory.Core.Commands.Files;
 using DayMemory.Core.Interfaces.Repositories;
 using DayMemory.Core.Models;
 using DayMemory.Core.Models.Personal;
@@ -53,6 +54,7 @@ namespace DayMemory.API.Controllers
 
         [HttpPost]
         [Route("api/files/media")]
+        [RequestFormLimits(MultipartBodyLengthLimit = Constants.RequestLimits.MaxFileSize)]
         public async Task<ActionResult> UploadMedia([FromForm] string fileId, [FromForm] int width, [FromForm] int height, [FromForm] FileType fileType, [FromForm] IFormFile? file, CancellationToken ct)
         {
             if (file == null)

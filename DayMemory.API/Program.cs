@@ -28,6 +28,7 @@ using Google.Api;
 using Hangfire;
 using Hangfire.SqlServer;
 using X.Extensions.Logging.Telegram;
+using Microsoft.AspNetCore.Http.Features;
 
 string CorsPolicyName = "DayMemoryCorsPolicy";
 
@@ -140,6 +141,11 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequireLowercase = false;
     options.Password.RequireNonAlphanumeric = false;
     options.Password.RequireDigit = false;
+});
+
+builder.Services.Configure<FormOptions>(o =>  // currently all set to max, configure it to your needs!
+{
+    o.MultipartBodyLengthLimit = Constants.RequestLimits.MaxFileSize; //10MB
 });
 
 var tokenKey = builder.Configuration.GetValue<string>("JWT:Secret");
