@@ -67,12 +67,12 @@ namespace DayMemory.API.Controllers
                 UserId = userId
             };
 
-            var id = await mediator.Send(command, ct);
-
-            logger.LogInformation("File uploaded: {0}, size: {1}", file.FileName, file.Length);
+            var id = await mediator.Send(command, ct);            
 
             var query = new GetFileQuery { FileId = id, UserId = User.Identity!.Name! };
             var result = await mediator.Send(query, ct);
+
+            logger.LogInformation("File uploaded: {0}", result!.OriginalUrl);
 
             return Ok(result);
         }
