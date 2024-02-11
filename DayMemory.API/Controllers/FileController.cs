@@ -15,28 +15,13 @@ using SkiaSharp;
 namespace DayMemory.API.Controllers
 {
     [Authorize]
-    public class FileController : ControllerBase
+    public class FileController(IFileRepository fileRepository, IMediator mediator, ILogger<FileController> logger) : ControllerBase
     {
-        private readonly IFileRepository _fileRepository;
-
-        private readonly IFileService _fileService;
-
-        private readonly IUrlResolver _urlResolver;
-        private readonly IMediator _mediator;
-
-        public FileController(IFileRepository fileRepository, IFileService fileService, IUrlResolver urlResolver, IMediator mediator)
-        {
-            _fileRepository = fileRepository;
-            _fileService = fileService;
-            _urlResolver = urlResolver;
-            _mediator = mediator;
-        }
-
         [Route("api/files/{fileId}")]
         [HttpHead]
         public async Task<ActionResult> CheckIfFileExists([FromRoute] string fileId)
         {
-            var fileExists = await _fileRepository.ExistsAsync(fileId);
+            var fileExists = await fileRepository.ExistsAsync(fileId);
             if (!fileExists)
                 return NotFound();
 
@@ -48,7 +33,7 @@ namespace DayMemory.API.Controllers
         public async Task<ActionResult> GetFile([FromRoute] string fileId, CancellationToken ct)
         {
             var query = new GetFileQuery { FileId = fileId, UserId = User.Identity!.Name! };
-            var result = await _mediator.Send(query, ct);
+            var result = await mediator.Send(query, ct);
             return Ok(result);
         }
 
@@ -59,14 +44,18 @@ namespace DayMemory.API.Controllers
         {
             if (file == null)
             {
+                logger.LogInformation("No file was uploaded");
                 return BadRequest();
             }
 
             if (fileType == FileType.Unknown)
             {
+                logger.LogInformation("Unknown file type");
                 return BadRequest("File type is unknown.");
             }
-            
+
+            logger.LogInformation("Uploading file: {0}, size: {1}", file.FileName, file.Length);
+
             var userId = User.Identity!.Name!;
             var command = new CreateMediaFileCommand()
             {
@@ -78,9 +67,12 @@ namespace DayMemory.API.Controllers
                 UserId = userId
             };
 
-            var id = await _mediator.Send(command, ct);
+            var id = await mediator.Send(command, ct);
+
+            logger.LogInformation("File uploaded: {0}, size: {1}", file.FileName, file.Length);
+
             var query = new GetFileQuery { FileId = id, UserId = User.Identity!.Name! };
-            var result = await _mediator.Send(query, ct);
+            var result = await mediator.Send(query, ct);
 
             return Ok(result);
         }
