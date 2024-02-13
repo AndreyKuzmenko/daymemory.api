@@ -11,6 +11,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SkiaSharp;
+using System.Text.Json;
 
 namespace DayMemory.API.Controllers
 {
@@ -40,7 +41,7 @@ namespace DayMemory.API.Controllers
         [HttpPost]
         [Route("api/files/media")]
         [RequestFormLimits(MultipartBodyLengthLimit = Constants.RequestLimits.MaxFileSize)]
-        public async Task<ActionResult> UploadMedia([FromForm] string fileId, [FromForm] int width, [FromForm] int height, [FromForm] FileType fileType, [FromForm] IFormFile? file, CancellationToken ct)
+        public async Task<IActionResult> UploadMedia([FromForm] string fileId, [FromForm] int width, [FromForm] int height, [FromForm] FileType fileType, [FromForm] IFormFile? file, CancellationToken ct)
         {
             if (file == null)
             {
@@ -73,6 +74,8 @@ namespace DayMemory.API.Controllers
             var result = await mediator.Send(query, ct);
 
             logger.LogInformation("File uploaded: {0}", result!.OriginalUrl);
+
+            logger.LogInformation("json returned: {0}", JsonSerializer.Serialize(result!));
 
             return Ok(result);
         }
