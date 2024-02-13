@@ -40,6 +40,7 @@ namespace DayMemory.API.Controllers
 
         [HttpPost]
         [Route("api/files/media")]
+        [RequestSizeLimit(Constants.RequestLimits.MaxFileSize)]
         [RequestFormLimits(MultipartBodyLengthLimit = Constants.RequestLimits.MaxFileSize)]
         public async Task<IActionResult> UploadMedia([FromForm] string fileId, [FromForm] int width, [FromForm] int height, [FromForm] FileType fileType, [FromForm] IFormFile? file, CancellationToken ct)
         {
@@ -74,8 +75,6 @@ namespace DayMemory.API.Controllers
             var result = await mediator.Send(query, ct);
 
             logger.LogInformation("File uploaded: {0}", result!.OriginalUrl);
-
-            logger.LogInformation("json returned: {0}", JsonSerializer.Serialize(result!));
 
             return Ok(result);
         }

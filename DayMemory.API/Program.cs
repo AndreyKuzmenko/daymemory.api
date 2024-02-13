@@ -145,7 +145,8 @@ builder.Services.Configure<IdentityOptions>(options =>
 
 builder.Services.Configure<FormOptions>(o =>  // currently all set to max, configure it to your needs!
 {
-    o.MultipartBodyLengthLimit = Constants.RequestLimits.MaxFileSize; //10MB
+    o.MultipartBodyLengthLimit = Constants.RequestLimits.MaxFileSize; //100MB
+    o.ValueLengthLimit = (int)Constants.RequestLimits.MaxFileSize; //100MB
 });
 
 var tokenKey = builder.Configuration.GetValue<string>("JWT:Secret");
